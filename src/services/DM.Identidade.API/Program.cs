@@ -17,12 +17,12 @@ if (hostEnvironment.IsDevelopment())
 
 builder.Services.AddIdentidadeConfig(builder.Configuration);
 builder.Services.AddApiConfig();
-builder.Services.AddSwaggerConfiguration();
+builder.Services.AddSwaggerConfig();
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
-app.UseSwaggerConfiguration();
+app.UseSwaggerConfig();
 app.UseApiConfig(app.Environment);
 
 app.Run();

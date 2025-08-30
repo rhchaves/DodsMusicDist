@@ -1,32 +1,49 @@
 using DM.Loja.MVC.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
-namespace DM.Loja.MVC.Controllers
+namespace DM.Loja.MVC.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    public IActionResult Index()
     {
-        private readonly ILogger<HomeController> _logger;
+        return View();
+    }
 
-        public HomeController(ILogger<HomeController> logger)
+    public IActionResult Privacy()
+    {
+        return View();
+    }
+
+    [Route("error/{id:length(3,3)}")]
+    public IActionResult Error(int id)
+    {
+        var modelErro = new ErrorViewModel();
+
+        if (id == 500)
         {
-            _logger = logger;
+            modelErro.Mensagem = "Ocorreu um erro! Tente novamente mais tarde ou contate nosso suporte.";
+            modelErro.Titulo = "Ocorreu um erro!";
+            modelErro.CodigoErro = id;
+        }
+        else if (id == 404)
+        {
+            modelErro.Mensagem =
+                "A página que está procurando não existe! <br />Em caso de dúvidas entre em contato com nosso suporte";
+            modelErro.Titulo = "Ops! Página não encontrada.";
+            modelErro.CodigoErro = id;
+        }
+        else if (id == 403)
+        {
+            modelErro.Mensagem = "Você não tem permissão para fazer isto.";
+            modelErro.Titulo = "Acesso Negado";
+            modelErro.CodigoErro = id;
+        }
+        else
+        {
+            return StatusCode(404);
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        return View("Error", modelErro);
     }
 }
