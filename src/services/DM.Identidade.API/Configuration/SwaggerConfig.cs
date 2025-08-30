@@ -4,7 +4,7 @@ namespace DM.Identidade.API.Configuration;
 
 public static class SwaggerConfig
 {
-    public static IServiceCollection AddSwaggerConfiguration(this IServiceCollection services)
+    public static IServiceCollection AddSwaggerConfig(this IServiceCollection services)
     {
         services.AddSwaggerGen(s =>
         {
@@ -22,7 +22,7 @@ public static class SwaggerConfig
         return services;
     }
 
-    public static IApplicationBuilder UseSwaggerConfiguration(this IApplicationBuilder app)
+    public static IApplicationBuilder UseSwaggerConfig(this IApplicationBuilder app)
     {
         app.UseSwagger();
         app.UseSwaggerUI();

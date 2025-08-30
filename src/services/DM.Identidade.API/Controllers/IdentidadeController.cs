@@ -15,15 +15,15 @@ public class IdentidadeController : BaseController
 {
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
-    private readonly AppSettings _appSettings;
+    private readonly AppConfig _appConfig;
 
     public IdentidadeController(SignInManager<IdentityUser> signInManager,
                             UserManager<IdentityUser> userManager,
-                            IOptions<AppSettings> appSettings)
+                            IOptions<AppConfig> appConfig)
     {
         _signInManager = signInManager;
         _userManager = userManager;
-        _appSettings = appSettings.Value;
+        _appConfig = appConfig.Value;
     }
 
     [HttpPost("nova-conta")]
@@ -110,13 +110,13 @@ public class IdentidadeController : BaseController
     private string CodificarToken(ClaimsIdentity identityClaims)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+        var key = Encoding.ASCII.GetBytes(_appConfig.Secret);
         var token = tokenHandler.CreateToken(new SecurityTokenDescriptor
         {
-            Issuer = _appSettings.Emissor,
-            Audience = _appSettings.ValidoEm,
+            Issuer = _appConfig.Emissor,
+            Audience = _appConfig.ValidoEm,
             Subject = identityClaims,
-            Expires = DateTime.UtcNow.AddHours(_appSettings.ExpiracaoHoras),
+            Expires = DateTime.UtcNow.AddHours(_appConfig.ExpiracaoHoras),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         });
 
@@ -128,7 +128,7 @@ public class IdentidadeController : BaseController
         return new UsuarioRespostaLogin
         {
             AccessToken = encodedToken,
-            ExpiresIn = TimeSpan.FromHours(_appSettings.ExpiracaoHoras).TotalSeconds,
+            ExpiresIn = TimeSpan.FromHours(_appConfig.ExpiracaoHoras).TotalSeconds,
             UsuarioToken = new UsuarioToken
             {
                 Id = user.Id,

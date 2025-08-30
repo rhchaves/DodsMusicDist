@@ -2,14 +2,14 @@
 
 public static class ApiConfig
 {
-    public static IServiceCollection AddApiConfiguration(this IServiceCollection services)
+    public static IServiceCollection AddApiConfig(this IServiceCollection services)
     {
         services.AddControllers();
 
         return services;
     }
 
-    public static IApplicationBuilder UseApiConfiguration(this IApplicationBuilder app, IWebHostEnvironment env)
+    public static IApplicationBuilder UseApiConfig(this IApplicationBuilder app, IWebHostEnvironment env)
     {
         if (env.IsDevelopment())
         {
@@ -18,7 +18,7 @@ public static class ApiConfig
 
         app.UseHttpsRedirection();
         app.UseRouting();
-        app.UseIdentityConfiguration();
+        app.UseIdentidadeConfig();
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();

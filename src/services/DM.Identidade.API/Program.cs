@@ -15,14 +15,14 @@ if (hostEnvironment.IsDevelopment())
     builder.Configuration.AddUserSecrets<Program>();
 }
 
-builder.Services.AddIdentityConfiguration(builder.Configuration);
-builder.Services.AddApiConfiguration();
+builder.Services.AddIdentidadeConfig(builder.Configuration);
+builder.Services.AddApiConfig();
 builder.Services.AddSwaggerConfiguration();
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
 app.UseSwaggerConfiguration();
-app.UseApiConfiguration(app.Environment);
+app.UseApiConfig(app.Environment);
 
 app.Run();

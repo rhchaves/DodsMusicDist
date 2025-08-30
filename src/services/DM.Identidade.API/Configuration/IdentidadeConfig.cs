@@ -8,26 +8,26 @@ using System.Text;
 
 namespace DM.Identidade.API.Configuration;
 
-public static class IdentityConfig
+public static class IdentidadeConfig
 {
-    public static IServiceCollection AddIdentityConfiguration(this IServiceCollection services,
+    public static IServiceCollection AddIdentidadeConfig(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddDbContext<ApplicationDbContext>(options =>
+        services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection") ??
                 throw new InvalidOperationException("Connection string 'DefaultConnection' not found.")));
 
         services.AddDefaultIdentity<IdentityUser>()
             .AddRoles<IdentityRole>()
-            .AddErrorDescriber<IdentityMensagensPortugues>()
-            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddErrorDescriber<IdentidadeMsgPtBr>()
+            .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
         // JWT
         var appSettingsSection = configuration.GetSection("AppSettings");
-        services.Configure<AppSettings>(appSettingsSection);
+        services.Configure<AppConfig>(appSettingsSection);
 
-        var appSettings = appSettingsSection.Get<AppSettings>();
+        var appSettings = appSettingsSection.Get<AppConfig>();
         var key = Encoding.ASCII.GetBytes(appSettings.Secret);
 
         services.AddAuthentication(options =>
@@ -52,7 +52,7 @@ public static class IdentityConfig
         return services;
     }
 
-    public static IApplicationBuilder UseIdentityConfiguration(this IApplicationBuilder app)
+    public static IApplicationBuilder UseIdentidadeConfig(this IApplicationBuilder app)
     {
         app.UseAuthentication();
         app.UseAuthorization();
