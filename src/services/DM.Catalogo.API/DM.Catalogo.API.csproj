@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\..\building blocks\DM.WebAPI.Core\DM.WebAPI.Core.csproj" />
   </ItemGroup>
 
 </Project>

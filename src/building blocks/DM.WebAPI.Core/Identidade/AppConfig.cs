@@ -1,4 +1,4 @@
-﻿namespace DM.Identidade.API.Extensions;
+﻿namespace DM.WebAPI.Core.Identidade;
 
 public class AppConfig
 {

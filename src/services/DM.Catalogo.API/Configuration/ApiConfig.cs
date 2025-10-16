@@ -1,6 +1,6 @@
 ﻿using DM.WebAPI.Core.Identidade;
 
-namespace DM.Identidade.API.Configuration;
+namespace DM.Catalogo.API.Configuration;
 
 public static class ApiConfig
 {
@@ -20,6 +20,7 @@ public static class ApiConfig
 
         app.UseHttpsRedirection();
         app.UseRouting();
+        app.UseCors("Total");
         app.UseAutenticacaoConfig();
         app.UseEndpoints(endpoints =>
         {

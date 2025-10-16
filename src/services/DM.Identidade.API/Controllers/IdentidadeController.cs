@@ -1,5 +1,5 @@
-﻿using DM.Identidade.API.Extensions;
-using DM.Identidade.API.Models;
+﻿using DM.Identidade.API.Models;
+using DM.WebAPI.Core.Identidade;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
