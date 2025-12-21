@@ -20,3 +20,19 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/* Garante que todas as imagens do card tenham o mesmo tamanho */
+.produto-img {
+    height: 200px;
+    width: 100%;
+    object-fit: contain; /* NÃO corta a imagem */
+    background-color: #f8f9fa; /* fundo neutro para imagens menores */
+}
+
+/* Limita o texto a 3 linhas */
+.text-truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

@@ -1,0 +1,55 @@
+﻿@using DM.Loja.MVC.Extensions
+@model IEnumerable<DM.Loja.MVC.Models.ProdutoViewModel>
+
+@{
+    ViewData["Title"] = "Todos os produtos";
+}
+
+<section>
+    <div>
+        <div class="container" style=" padding-top: 20px">
+            <div class="row">
+                @{
+                    @foreach (var produto in Model.OrderBy(p => p.Nome))
+                    {
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <div class="card h-100 shadow-sm">
+                                <div class="produto-img-wrapper">
+                                    <a asp-controller="Catalogo"
+                                       asp-action="ProdutoDetalhe"
+                                       asp-route-id="@produto.Id"
+                                       class="text-decoration-none text-dark">
+                                            <img src="~/images/produtos/@produto.Imagem"
+                                                 alt="@produto.Nome"
+                                                 class="produto-img" />
+                                    </a>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <h6 class="card-title">@produto.Nome</h6>
+
+                                    @if ((produto.Valor >= 10000 & produto.QuantidadeEstoque <= 3) || (produto.Valor < 10000 & produto.QuantidadeEstoque <= 5))
+                                    {
+                                        <p class="card-text small text-muted mb-2">
+                                            @this.MensagemEstoque(produto.QuantidadeEstoque)
+                                        </p>
+                                    }
+
+                                    <p class="card-text text-truncate-3">
+                                        @produto.Descricao
+                                    </p>
+
+                                    <a asp-controller="Catalogo"
+                                       asp-action="ProdutoDetalhe"
+                                       asp-route-id="@produto.Id"
+                                       class="btn btn-primary mt-auto">
+                                        Ver detalhes
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,4 +1,5 @@
 using DM.Loja.MVC.Configuration;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +17,7 @@ if (hostEnvironment.IsDevelopment())
 
 builder.Services.AddIdentidadeConfiguracao();
 builder.Services.AddMvcConfiguracao(builder.Configuration);
-builder.Services.RegistrarServicos();
+builder.Services.RegistrarServicos(builder.Configuration);
 
 var app = builder.Build();
 
