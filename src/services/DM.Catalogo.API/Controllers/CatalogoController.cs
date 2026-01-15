@@ -24,7 +24,8 @@ public class CatalogoController : MainController
         return await _produtoRepository.ObterTodos();
     }
 
-    [ClaimsAuthorize("Catalogo", "Ler")]
+    //[ClaimsAuthorize("Catalogo", "Ler")] Melhor deixar o acesso aberto
+    [AllowAnonymous]
     [HttpGet("catalogo/produtos/{id}")]
     public async Task<Produto> ProdutoDetalhe(Guid id)
     {
