@@ -14,4 +14,9 @@
     <PackageReference Include="Refit" Version="9.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\building blocks\DM.Core\DM.Core.csproj" />
+    <ProjectReference Include="..\..\building blocks\DM.WebAPI.Core\DM.WebAPI.Core.csproj" />
+  </ItemGroup>
+
 </Project>

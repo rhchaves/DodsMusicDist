@@ -2,7 +2,7 @@
 
 namespace DM.Loja.MVC.Extensions;
 
-public class ResumoViewComponent : ViewComponent
+public class SummaryViewComponent : ViewComponent
 {
     public async Task<IViewComponentResult> InvokeAsync()
     {

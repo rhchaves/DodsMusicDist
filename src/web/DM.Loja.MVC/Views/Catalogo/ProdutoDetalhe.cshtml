@@ -40,7 +40,7 @@
                     </div>
 
                     <h5>@Model.Descricao</h5><br />
-                    <p> @this.MensagemEstoque(Model.QuantidadeEstoque)</p>
+                    <p>@this.MensagemEstoque(Model.QuantidadeEstoque)</p>
 
                     <hr>
 
@@ -51,12 +51,11 @@
                                 <div class="form-group col-md flex-grow-0">
                                     <label>Quantidade</label>
                                     <div class="input-group input-spinner">
-                                        <select class="form-control">
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                            <option value="4">4</option>
-                                            <option value="5">5</option>
+                                        <select class="form-select">
+                                            @for (int i = 1; i <= Model.QuantidadeEstoque; i++)
+                                            {
+                                                <option value="@i">@i</option>
+                                            }
                                         </select>
                                     </div>
                                 </div>

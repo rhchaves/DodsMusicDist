@@ -7,46 +7,39 @@
 
 <section>
     <div>
-        <div class="container" style=" padding-top: 20px">
+        <div style="background-image: url(images/banners/Template.jpg); height: 100%; background-position: center; background-repeat: no-repeat; background-size: cover">
+            <div class="text-center">
+                <img src="~/images/banners/dodsmusic.png" />
+            </div>
+        </div>
+        <div class="container pt-4">
             <div class="row">
                 @{
                     // Lógica provisória enquanto não tiver contagem de vendas. (Depois exibir por item mais vendido).
                     @foreach (var produto in Model.OrderByDescending(p => p.QuantidadeEstoque).ThenBy(p => p.Nome))
                     {
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                            <div class="card h-100 shadow-sm">
-                                <div class="produto-img-wrapper">
-                                    <a asp-controller="Catalogo"
-                                       asp-action="ProdutoDetalhe"
-                                       asp-route-id="@produto.Id"
-                                       class="text-decoration-none text-dark">
-                                            <img src="~/images/produtos/@produto.Imagem"
-                                                 alt="@produto.Nome"
-                                                 class="produto-img mt-2" />
-                                    </a>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 h-100">
+                            <a class="text-decoration-none text-dark d-block"
+                               asp-controller="Catalogo" asp-action="ProdutoDetalhe" asp-route-id="@produto.Id">
+
+                                <div href="#" class="card card-product-grid overflow-hidden">
+                                    <div class="produto-img-wrapper">
+                                        <img class="img-wrap" src="~/images/produtos/@produto.Imagem" alt="@produto.Nome">
+                                    </div>
+
+                                    <figcaption class="info-wrap h-75">
+                                        <b class="produto-nome" title="@produto.Nome">@produto.Nome</b>
+                                        <small class="card-text">
+                                            @this.MensagemEstoque(produto.QuantidadeEstoque)<br />
+                                            @(produto.Descricao?.Length > 80 ? produto.Descricao.Substring(0, 80) + "..." : produto.Descricao)
+                                        </small>
+                                    </figcaption>
+
+                                    <div class="card-footer">
+                                        <h3>@this.FormatoMoeda(produto.Valor)</h3>
+                                    </div>
                                 </div>
-                                <div class="card-body d-flex flex-column">
-                                    <h6 class="card-title">@produto.Nome</h6>
-
-                                    @if ((produto.Valor >= 10000 & produto.QuantidadeEstoque <= 3) || (produto.Valor < 10000 & produto.QuantidadeEstoque <= 5))
-                                    {
-                                        <p class="card-text small text-muted mb-2">
-                                            @this.MensagemEstoque(produto.QuantidadeEstoque)
-                                        </p>
-                                    }
-
-                                    <p class="card-text text-truncate-3">
-                                        @produto.Descricao
-                                    </p>
-
-                                    <a asp-controller="Catalogo"
-                                       asp-action="ProdutoDetalhe"
-                                       asp-route-id="@produto.Id"
-                                       class="btn btn-primary mt-auto">
-                                        Ver detalhes
-                                    </a>
-                                </div>
-                            </div>
+                            </a>
                         </div>
                     }
                 }

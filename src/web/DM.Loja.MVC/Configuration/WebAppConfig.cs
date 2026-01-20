@@ -1,8 +1,10 @@
 ﻿using DM.Loja.MVC.Extensions;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
 
 namespace DM.Loja.MVC.Configuration;
 
-public static class LojaAppConfig
+public static class WebAppConfig
 {
     public static void AddMvcConfiguracao(this IServiceCollection services, IConfiguration configuration)
     {
@@ -19,22 +21,30 @@ public static class LojaAppConfig
         }
         else
         {
-            app.UseExceptionHandler("/erro/500");
-            app.UseStatusCodePagesWithRedirects("/erro/{0}");
+            app.UseExceptionHandler("/Error/500");
+            app.UseStatusCodePagesWithRedirects("/Error/{0}");
             app.UseHsts();
         }
-
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseRouting();
         app.UseIdentidadeConfiguracao();
+
+        var supportedCultures = new[] { new CultureInfo("pt-BR") };
+        app.UseRequestLocalization(new RequestLocalizationOptions
+        {
+            DefaultRequestCulture = new RequestCulture("pt-BR"),
+            SupportedCultures = supportedCultures,
+            SupportedUICultures = supportedCultures
+        });
+
         app.UseMiddleware<ExceptionMiddleware>();
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Catalogo}/{action=Index}/{id?}");
         });
     }
 }
