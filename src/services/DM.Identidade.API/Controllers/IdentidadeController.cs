@@ -1,4 +1,5 @@
 ﻿using DM.Identidade.API.Models;
+using DM.WebAPI.Core.Controllers;
 using DM.WebAPI.Core.Identidade;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,7 @@ using System.Text;
 namespace DM.Identidade.API.Controllers;
 
 [Route("api/identidade")]
-public class IdentidadeController : BaseController
+public class IdentidadeController : MainController
 {
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
