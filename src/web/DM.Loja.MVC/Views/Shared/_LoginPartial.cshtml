@@ -4,6 +4,9 @@
 @if (AppUsuario.EstaAutenticado())
 {
     <div>
+        <vc:carrinho />
+    </div>
+    <div>
         <div class="dropdown d-inline-block">
             <a class="icontext dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                 <img class="icon icon-sm rounded-circle" src="https://s.gravatar.com/avatar/@this.HashEmailForGravatar(AppUsuario.ObterUsuarioEmail())?d=mm&s=45">
