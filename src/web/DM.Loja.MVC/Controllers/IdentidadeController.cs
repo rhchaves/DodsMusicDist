@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace DM.Loja.MVC.Controllers
 {
-    public class IdentidadeController : BaseController
+    public class IdentidadeController : MainController
     {
         private readonly IAutenticacaoServico _autenticacaoServico;
 

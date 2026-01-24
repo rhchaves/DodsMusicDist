@@ -4,7 +4,7 @@ namespace DM.Loja.MVC.Configuration;
 
 public static class IdentidadeConfig
 {
-    public static void AddIdentidadeConfiguracao(this IServiceCollection services)
+    public static void AddIdentidadeConfig(this IServiceCollection services)
     {
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
@@ -14,7 +14,7 @@ public static class IdentidadeConfig
             });
     }
 
-    public static void UseIdentidadeConfiguracao(this IApplicationBuilder app)
+    public static void UseIdentidadeConfig(this IApplicationBuilder app)
     {
         app.UseAuthentication();
         app.UseAuthorization();

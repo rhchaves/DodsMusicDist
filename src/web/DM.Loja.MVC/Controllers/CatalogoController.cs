@@ -1,9 +1,10 @@
 ﻿using DM.Loja.MVC.Services;
+using DM.WebAPI.Core.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DM.Loja.MVC.Controllers
 {
-    public class CatalogoController : BaseController
+    public class CatalogoController : MainController
     {
         private readonly ICatalogoServico _catalogoServico;
 

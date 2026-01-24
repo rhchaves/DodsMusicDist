@@ -1,9 +1,10 @@
 using DM.Loja.MVC.Models;
+using DM.WebAPI.Core.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DM.Loja.MVC.Controllers;
 
-public class HomeController : BaseController
+public class HomeController : MainController
 {
     [Route("sistema-indisponivel")]
     public IActionResult SistemaIndisponivel()

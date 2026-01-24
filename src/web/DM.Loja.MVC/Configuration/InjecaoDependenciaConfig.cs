@@ -1,6 +1,7 @@
 ﻿using DM.Loja.MVC.Extensions;
 using DM.Loja.MVC.Services;
 using DM.Loja.MVC.Services.Handlers;
+using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Polly;
 using Polly.Extensions.Http;
 using Polly.Retry;
@@ -11,34 +12,34 @@ public static class InjecaoDependenciaConfig
 {
     public static void RegistrarServicos(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddSingleton<IValidationAttributeAdapterProvider, CpfValidationAttributeAdapterProvider>();
+        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        services.AddScoped<IUsuario, Usuario>();
+
+        #region HttpServices
+
         services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
 
-        services.AddHttpClient<IAutenticacaoServico, AutenticacaoServico>();
+        services.AddHttpClient<IAutenticacaoServico, AutenticacaoServico>()
+                .AddPolicyHandler(PollyExtensions.EsperarTentar())
+                .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
         services.AddHttpClient<ICatalogoServico, CatalogoServico>()
             .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
-            //.AddTransientHttpErrorPolicy(
-            //p => p.WaitAndRetryAsync(3, _ => TimeSpan.FromMilliseconds(600)));
             .AddPolicyHandler(PollyExtensions.EsperarTentar())
-            .AddTransientHttpErrorPolicy(
-                p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
+            .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
-        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-        services.AddScoped<IUsuario, AspNetUser>();
 
-        #region Refit
-
-        //services.AddHttpClient("Refit",
-        //        options =>
-        //        {
-        //            options.BaseAddress = new Uri(configuration.GetSection("CatalogoUrl").Value);
-        //        })
-        //    .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
-        //    .AddTypedClient(Refit.RestService.For<ICatalogoServiceRefit>);
+        services.AddHttpClient<ICarrinhoServico, CarrinhoServico>()
+            .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
+            .AddPolicyHandler(PollyExtensions.EsperarTentar())
+            .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
         #endregion
     }
 }
+
+#region PollyExtension
 
 public class PollyExtensions
 {
@@ -51,13 +52,10 @@ public class PollyExtensions
                 TimeSpan.FromSeconds(1),
                 TimeSpan.FromSeconds(5),
                 TimeSpan.FromSeconds(10),
-            }, (outcome, timespan, retryCount, context) =>
-            {
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine($"Tentando pela {retryCount} vez!");
-                Console.ForegroundColor = ConsoleColor.White;
             });
 
         return retry;
     }
 }
+
+#endregion

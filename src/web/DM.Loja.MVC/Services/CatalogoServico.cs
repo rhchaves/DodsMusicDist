@@ -8,10 +8,9 @@ public class CatalogoServico : Servico, ICatalogoServico
 {
     private readonly HttpClient _httpClient;
 
-    public CatalogoServico(HttpClient httpClient,
-        IOptions<AppConfig> settings)
+    public CatalogoServico(HttpClient httpClient, IOptions<AppConfig> config)
     {
-        httpClient.BaseAddress = new Uri(settings.Value.CatalogoUrl);
+        httpClient.BaseAddress = new Uri(config.Value.CatalogoUrl);
 
         _httpClient = httpClient;
     }

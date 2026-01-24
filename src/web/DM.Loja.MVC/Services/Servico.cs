@@ -1,4 +1,5 @@
 ﻿using DM.Loja.MVC.Extensions;
+using DM.Loja.MVC.Models;
 using System.Text;
 using System.Text.Json;
 
@@ -40,5 +41,10 @@ public abstract class Servico
 
         response.EnsureSuccessStatusCode();
         return true;
+    }
+
+    protected ResultadoResposta RetornoOk()
+    {
+        return new ResultadoResposta();
     }
 }

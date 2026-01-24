@@ -29,7 +29,7 @@ public static class WebAppConfig
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseRouting();
-        app.UseIdentidadeConfiguracao();
+        app.UseIdentidadeConfig();
 
         var supportedCultures = new[] { new CultureInfo("pt-BR") };
         app.UseRequestLocalization(new RequestLocalizationOptions

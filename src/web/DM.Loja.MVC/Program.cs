@@ -1,5 +1,4 @@
 using DM.Loja.MVC.Configuration;
-using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +14,7 @@ if (hostEnvironment.IsDevelopment())
     builder.Configuration.AddUserSecrets<Program>();
 }
 
-builder.Services.AddIdentidadeConfiguracao();
+builder.Services.AddIdentidadeConfig();
 builder.Services.AddMvcConfiguracao(builder.Configuration);
 builder.Services.RegistrarServicos(builder.Configuration);
 
