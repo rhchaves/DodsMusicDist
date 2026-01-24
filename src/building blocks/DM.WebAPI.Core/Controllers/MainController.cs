@@ -9,7 +9,7 @@ public abstract class MainController : Controller
 {
     protected ICollection<string> Erros = new List<string>();
 
-    protected ActionResult CustomResponse(object result = null)
+    protected ActionResult ValidarResposta(object result = null)
     {
         if (OperacaoValida())
         {
@@ -22,7 +22,7 @@ public abstract class MainController : Controller
             }));
     }
 
-    protected ActionResult CustomResponse(ModelStateDictionary modelState)
+    protected ActionResult ValidarResposta(ModelStateDictionary modelState)
     {
         var erros = modelState.Values.SelectMany(e => e.Errors);
         foreach (var erro in erros)
@@ -30,14 +30,14 @@ public abstract class MainController : Controller
             AdicionarErroProcessamento(erro.ErrorMessage);
         }
 
-        return CustomResponse();
+        return ValidarResposta();
     }
 
-    protected ActionResult CustomResponse(ValidationResult validationResult)
+    protected ActionResult ValidarResposta(ValidationResult validationResult)
     {
         AdicionarErroProcessamento(validationResult.ErrorMessage);
 
-        return CustomResponse();
+        return ValidarResposta();
     }
 
     protected bool OperacaoValida()

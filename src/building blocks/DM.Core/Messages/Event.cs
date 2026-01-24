@@ -2,11 +2,11 @@
 
 namespace DM.Core.Messages;
 
-public class Evento : Mensagem, INotification
+public class Event : Message, INotification
 {
     public DateTime Timestamp { get; private set; }
 
-    protected Evento()
+    protected Event()
     {
         Timestamp = DateTime.Now;
     }
