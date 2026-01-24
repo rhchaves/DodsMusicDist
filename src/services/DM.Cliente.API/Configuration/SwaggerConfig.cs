@@ -1,0 +1,41 @@
+﻿using Microsoft.OpenApi;
+
+namespace DM.Clientes.API.Configuration;
+
+public static class SwaggerConfig
+{
+    public static IServiceCollection AddSwaggerConfig(this IServiceCollection services)
+    {
+        services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo()
+            {
+                Title = "DodsMusic Clientes API",
+                Version = "v1",
+                Description = "Esta API faz parte da plataforma DodsMusic para a administração de clientes na plataforma.",
+                Contact = new OpenApiContact() { Name = "Suporte", Email = "suporte@dodsmusic.com.br" },
+                License = new OpenApiLicense() { Name = "MIT", Url = new Uri("https://opensource.org/licenses/MIT") }
+            });
+
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Description = "Insira o token JWT desta maneira: Bearer {seu token}",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Scheme = "Bearer",
+                BearerFormat = "JWT"
+            });
+        });
+
+        return services;
+    }
+
+    public static IApplicationBuilder UseSwaggerConfig(this IApplicationBuilder app)
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+
+        return app;
+    }
+}
