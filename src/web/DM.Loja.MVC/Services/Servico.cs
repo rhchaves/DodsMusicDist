@@ -1,5 +1,5 @@
-﻿using DM.Loja.MVC.Extensions;
-using DM.Loja.MVC.Models;
+﻿using DM.Core.Communication;
+using DM.Loja.MVC.Extensions;
 using System.Text;
 using System.Text.Json;
 
@@ -9,23 +9,17 @@ public abstract class Servico
 {
     protected StringContent ObterConteudo(object dado)
     {
-        return new StringContent(
-            JsonSerializer.Serialize(dado),
-            Encoding.UTF8,
-            "application/json");
+        return new StringContent(JsonSerializer.Serialize(dado), Encoding.UTF8, "application/json");
     }
 
-    protected async Task<T> DeserializarObjetoResponse<T>(HttpResponseMessage responseMessage)
+    protected async Task<T> DeserializarObjetoResposta<T>(HttpResponseMessage responseMessage)
     {
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
         return JsonSerializer.Deserialize<T>(await responseMessage.Content.ReadAsStringAsync(), options);
     }
 
-    protected bool TratarErrosResponse(HttpResponseMessage response)
+    protected bool TratarErrosResposta(HttpResponseMessage response)
     {
         switch ((int)response.StatusCode)
         {
@@ -43,8 +37,8 @@ public abstract class Servico
         return true;
     }
 
-    protected ResultadoResposta RetornoOk()
+    protected ResponseResult RetornoOk()
     {
-        return new ResultadoResposta();
+        return new ResponseResult();
     }
 }

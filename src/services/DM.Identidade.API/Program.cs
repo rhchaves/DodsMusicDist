@@ -18,7 +18,7 @@ if (hostEnvironment.IsDevelopment())
 builder.Services.AddIdentidadeConfig(builder.Configuration);
 builder.Services.AddApiConfig();
 builder.Services.AddSwaggerConfig();
-builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddMessageBusConfig(builder.Configuration);
 
 var app = builder.Build();
 

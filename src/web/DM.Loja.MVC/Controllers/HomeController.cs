@@ -1,5 +1,4 @@
 using DM.Loja.MVC.Models;
-using DM.WebAPI.Core.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DM.Loja.MVC.Controllers;

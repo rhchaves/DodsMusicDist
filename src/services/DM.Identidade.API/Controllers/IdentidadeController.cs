@@ -1,4 +1,6 @@
-﻿using DM.Identidade.API.Models;
+﻿using DM.Core.Messages.Integration;
+using DM.Identidade.API.Models;
+using DM.MessageBus;
 using DM.WebAPI.Core.Controllers;
 using DM.WebAPI.Core.Identidade;
 using Microsoft.AspNetCore.Identity;
@@ -18,13 +20,15 @@ public class IdentidadeController : MainController
     private readonly UserManager<IdentityUser> _userManager;
     private readonly AppConfig _appConfig;
 
-    public IdentidadeController(SignInManager<IdentityUser> signInManager,
-                            UserManager<IdentityUser> userManager,
-                            IOptions<AppConfig> appConfig)
+    private readonly IMessageBus _bus;
+
+    public IdentidadeController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, IOptions<AppConfig> appConfig,
+        IMessageBus bus)
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _appConfig = appConfig.Value;
+        _bus = bus;
     }
 
     [HttpPost("nova-conta")]
@@ -32,21 +36,29 @@ public class IdentidadeController : MainController
     {
         if (!ModelState.IsValid) return ValidarResposta(ModelState);
 
-        var user = new IdentityUser
+        var usuario = new IdentityUser
         {
             UserName = usuarioRegistro.Email,
             Email = usuarioRegistro.Email,
             EmailConfirmed = true
         };
 
-        var result = await _userManager.CreateAsync(user, usuarioRegistro.Senha);
+        var resultado = await _userManager.CreateAsync(usuario, usuarioRegistro.Senha);
 
-        if (result.Succeeded)
+        if (resultado.Succeeded)
         {
+            var clienteResultado = await RegistrarCliente(usuarioRegistro);
+
+            if (!clienteResultado.ValidationResult.IsValid)
+            {
+                await _userManager.DeleteAsync(usuario);
+                return ValidarResposta(clienteResultado.ValidationResult);
+            }
+
             return ValidarResposta(await GerarJwt(usuarioRegistro.Email));
         }
 
-        foreach (var error in result.Errors)
+        foreach (var error in resultado.Errors)
         {
             AdicionarErroProcessamento(error.Description);
         }
@@ -59,15 +71,15 @@ public class IdentidadeController : MainController
     {
         if (!ModelState.IsValid) return ValidarResposta(ModelState);
 
-        var result = await _signInManager.PasswordSignInAsync(usuarioLogin.Email, usuarioLogin.Senha,
+        var resultado = await _signInManager.PasswordSignInAsync(usuarioLogin.Email, usuarioLogin.Senha,
             false, true);
 
-        if (result.Succeeded)
+        if (resultado.Succeeded)
         {
             return ValidarResposta(await GerarJwt(usuarioLogin.Email));
         }
 
-        if (result.IsLockedOut)
+        if (resultado.IsLockedOut)
         {
             AdicionarErroProcessamento("Usuário temporariamente bloqueado por tentativas inválidas");
             return ValidarResposta();
@@ -79,21 +91,21 @@ public class IdentidadeController : MainController
 
     private async Task<UsuarioRespostaLogin> GerarJwt(string email)
     {
-        var user = await _userManager.FindByEmailAsync(email);
-        var claims = await _userManager.GetClaimsAsync(user);
+        var usuario = await _userManager.FindByEmailAsync(email);
+        var claims = await _userManager.GetClaimsAsync(usuario);
 
-        var identityClaims = await ObterClaimsUsuario(claims, user);
+        var identityClaims = await ObterClaimsUsuario(claims, usuario);
         var encodedToken = CodificarToken(identityClaims);
 
-        return ObterRespostaToken(encodedToken, user, claims);
+        return ObterRespostaToken(encodedToken, usuario, claims);
     }
 
-    private async Task<ClaimsIdentity> ObterClaimsUsuario(ICollection<Claim> claims, IdentityUser user)
+    private async Task<ClaimsIdentity> ObterClaimsUsuario(ICollection<Claim> claims, IdentityUser usuario)
     {
-        var userRoles = await _userManager.GetRolesAsync(user);
+        var userRoles = await _userManager.GetRolesAsync(usuario);
 
-        claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
-        claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
+        claims.Add(new Claim(JwtRegisteredClaimNames.Sub, usuario.Id));
+        claims.Add(new Claim(JwtRegisteredClaimNames.Email, usuario.Email));
         claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
         claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, ToUnixEpochDate(DateTime.UtcNow).ToString()));
         claims.Add(new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer64));
@@ -141,4 +153,22 @@ public class IdentidadeController : MainController
 
     private static long ToUnixEpochDate(DateTime date)
         => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
+
+    private async Task<ResponseMessage> RegistrarCliente(UsuarioRegistro usuarioRegistro)
+    {
+        var usuario = await _userManager.FindByEmailAsync(usuarioRegistro.Email);
+
+        var usuarioRegistrado = new UsuarioRegistradoIntegrationEvent(
+            Guid.Parse(usuario.Id), usuarioRegistro.Nome, usuarioRegistro.Email, usuarioRegistro.Cpf);
+
+        try
+        {
+            return await _bus.RequestAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(usuarioRegistrado);
+        }
+        catch
+        {
+            await _userManager.DeleteAsync(usuario);
+            throw;
+        }
+    }
 }

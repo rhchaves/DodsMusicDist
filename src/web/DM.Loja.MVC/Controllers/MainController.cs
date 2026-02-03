@@ -1,11 +1,11 @@
-﻿using DM.Loja.MVC.Models;
+﻿using DM.Core.Communication;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DM.Loja.MVC.Controllers;
 
 public class MainController : Controller
 {
-    protected bool RespostaPossuiErros(ResultadoResposta resposta)
+    protected bool RespostaPossuiErros(ResponseResult resposta)
     {
         if (resposta != null && resposta.Errors.Mensagens.Any())
         {

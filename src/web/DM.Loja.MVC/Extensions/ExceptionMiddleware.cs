@@ -1,5 +1,5 @@
 ﻿using Polly.CircuitBreaker;
-using Refit;
+//using Refit;
 using System.Net;
 
 namespace DM.Loja.MVC.Extensions;
@@ -23,14 +23,14 @@ public class ExceptionMiddleware
         {
             HandleRequestExceptionAsync(httpContext, ex.StatusCode);
         }
-        catch (ValidationApiException ex)
-        {
-            HandleRequestExceptionAsync(httpContext, ex.StatusCode);
-        }
-        catch (ApiException ex)
-        {
-            HandleRequestExceptionAsync(httpContext, ex.StatusCode);
-        }
+        //catch (ValidationApiException ex)
+        //{
+        //    HandleRequestExceptionAsync(httpContext, ex.StatusCode);
+        //}
+        //catch (ApiException ex)
+        //{
+        //    HandleRequestExceptionAsync(httpContext, ex.StatusCode);
+        //}
         catch (BrokenCircuitException)
         {
             HandleCircuitBreakerExceptionAsync(httpContext);

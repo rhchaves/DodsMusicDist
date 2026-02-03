@@ -3,15 +3,15 @@ using Microsoft.Extensions.Options;
 
 namespace DM.Bff.Compras.Services;
 
-public interface IPagamentoService
+public interface IPagamentoServico
 {
 }
 
-public class PagamentoService : Service, IPagamentoService
+public class PagamentoServico : Servico, IPagamentoServico
 {
     private readonly HttpClient _httpClient;
 
-    public PagamentoService(HttpClient httpClient, IOptions<AppServicesConfig> settings)
+    public PagamentoServico(HttpClient httpClient, IOptions<AppServicesConfig> settings)
     {
         _httpClient = httpClient;
         _httpClient.BaseAddress = new Uri(settings.Value.PagamentoUrl);

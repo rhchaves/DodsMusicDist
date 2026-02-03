@@ -1,25 +1,20 @@
-﻿using System.Net;
+﻿using DM.Core.Communication;
+using System.Net;
 using System.Text;
 using System.Text.Json;
 
 namespace DM.Bff.Compras.Services;
 
-public abstract class Service
+public abstract class Servico
 {
     protected StringContent ObterConteudo(object dado)
     {
-        return new StringContent(
-            JsonSerializer.Serialize(dado),
-            Encoding.UTF8,
-            "application/json");
+        return new StringContent(JsonSerializer.Serialize(dado), Encoding.UTF8, "application/json");
     }
 
     protected async Task<T> DeserializarObjetoResposta<T>(HttpResponseMessage responseMessage)
     {
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
         return JsonSerializer.Deserialize<T>(await responseMessage.Content.ReadAsStringAsync(), options);
     }
@@ -30,5 +25,10 @@ public abstract class Service
 
         response.EnsureSuccessStatusCode();
         return true;
+    }
+
+    protected ResponseResult RetornoOk()
+    {
+        return new ResponseResult();
     }
 }

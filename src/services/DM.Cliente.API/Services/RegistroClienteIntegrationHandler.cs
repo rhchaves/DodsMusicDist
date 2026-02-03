@@ -21,8 +21,6 @@ public class RegistroClienteIntegrationHandler : BackgroundService
     {
         _bus. RespondAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(async request =>
             await RegistrarCliente(request));
-
-        //_bus.AdvancedBus.Connected += OnConnect;
     }
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)

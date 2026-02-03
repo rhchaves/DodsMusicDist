@@ -1,21 +1,20 @@
-﻿using DM.Loja.MVC.Models;
-using DM.Loja.MVC.Services;
+﻿using DM.Loja.MVC.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DM.WebApp.MVC.Extensions
+namespace DM.Loja.MVC.Extensions
 {
     public class CarrinhoViewComponent : ViewComponent
     {
-        private readonly ICarrinhoServico _carrinhoServico;
+        private readonly IComprasBffServico _comprasBffServico;
 
-        public CarrinhoViewComponent(ICarrinhoServico carrinhoServico)
+        public CarrinhoViewComponent(IComprasBffServico comprasBffServico)
         {
-            _carrinhoServico = carrinhoServico;
+            _comprasBffServico = comprasBffServico;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            return View(await _carrinhoServico.ObterCarrinho() ?? new CarrinhoViewModel());
+            return View(await _comprasBffServico.ObterQuantidadeCarrinho());
         }
     }
 }

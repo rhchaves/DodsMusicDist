@@ -4,6 +4,12 @@ using Microsoft.Extensions.Options;
 
 namespace DM.Loja.MVC.Services;
 
+public interface ICatalogoServico
+{
+    Task<IEnumerable<ProdutoViewModel>> ObterTodos();
+    Task<ProdutoViewModel> ObterPorId(Guid id);
+}
+
 public class CatalogoServico : Servico, ICatalogoServico
 {
     private readonly HttpClient _httpClient;
@@ -17,19 +23,19 @@ public class CatalogoServico : Servico, ICatalogoServico
 
     public async Task<ProdutoViewModel> ObterPorId(Guid id)
     {
-        var response = await _httpClient.GetAsync($"/catalogo/produtos/{id}");
+        var resposta = await _httpClient.GetAsync($"/catalogo/produtos/{id}");
 
-        TratarErrosResponse(response);
+        TratarErrosResposta(resposta);
 
-        return await DeserializarObjetoResponse<ProdutoViewModel>(response);
+        return await DeserializarObjetoResposta<ProdutoViewModel>(resposta);
     }
 
     public async Task<IEnumerable<ProdutoViewModel>> ObterTodos()
     {
-        var response = await _httpClient.GetAsync("/catalogo/produtos/");
+        var resposta = await _httpClient.GetAsync("/catalogo/produtos/");
 
-        TratarErrosResponse(response);
+        TratarErrosResposta(resposta);
 
-        return await DeserializarObjetoResponse<IEnumerable<ProdutoViewModel>>(response);
+        return await DeserializarObjetoResposta<IEnumerable<ProdutoViewModel>>(resposta);
     }
 }

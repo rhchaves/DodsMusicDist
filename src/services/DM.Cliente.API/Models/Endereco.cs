@@ -16,7 +16,7 @@ public class Endereco : Entidade
     // EF Relation
     public Cliente Cliente { get; protected set; }
 
-    public Endereco(string logradouro, string numero, string complemento, string bairro, string cep, string cidade, string estado)
+    public Endereco(string logradouro, string numero, string complemento, string bairro, string cep, string cidade, string estado, Guid clienteId)
     {
         Logradouro = logradouro;
         Numero = numero;
@@ -26,4 +26,7 @@ public class Endereco : Entidade
         Cidade = cidade;
         Estado = estado;
     }
+
+    // EF Constructor
+    protected Endereco() { }
 }

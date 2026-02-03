@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.ComponentModel.DataAnnotations;
+using DM.Core.Communication;
 
 namespace DM.WebAPI.Core.Controllers;
 
@@ -38,6 +39,18 @@ public abstract class MainController : Controller
         AdicionarErroProcessamento(validationResult.ErrorMessage);
 
         return ValidarResposta();
+    }
+
+    protected bool RespostaPossuiErros(ResponseResult resposta)
+    {
+        if (resposta == null || !resposta.Errors.Mensagens.Any()) return false;
+
+        foreach (var mensagem in resposta.Errors.Mensagens)
+        {
+            AdicionarErroProcessamento(mensagem);
+        }
+
+        return true;
     }
 
     protected bool OperacaoValida()
