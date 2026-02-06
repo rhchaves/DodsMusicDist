@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
-namespace DM.Loja.MVC.Extensions;
+namespace DM.WebAPI.Core.Usuario;
 
 public interface IUsuario
 {

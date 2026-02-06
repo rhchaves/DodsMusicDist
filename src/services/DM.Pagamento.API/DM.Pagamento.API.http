@@ -1,6 +1,6 @@
-@DM.Pagamento.API_HostAddress = http://localhost:5003
+@DM.Pagamentos.API_HostAddress = http://localhost:5003
 
-GET {{DM.Pagamento.API_HostAddress}}/weatherforecast/
+GET {{DM.Pagamentos.API_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###

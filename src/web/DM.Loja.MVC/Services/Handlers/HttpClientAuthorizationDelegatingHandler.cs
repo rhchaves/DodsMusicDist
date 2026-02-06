@@ -1,4 +1,4 @@
-﻿using DM.Loja.MVC.Extensions;
+﻿using DM.WebAPI.Core.Usuario;
 using System.Net.Http.Headers;
 
 namespace DM.Loja.MVC.Services.Handlers;

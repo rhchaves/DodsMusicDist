@@ -1,8 +1,7 @@
-﻿using DM.WebAPI.Core.Usuario;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
-namespace DM.Loja.MVC.Extensions;
+namespace DM.WebAPI.Core.Usuario;
 
 public class Usuario : IUsuario
 {

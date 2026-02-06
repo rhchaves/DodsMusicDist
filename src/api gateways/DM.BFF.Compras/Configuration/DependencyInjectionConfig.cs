@@ -1,7 +1,7 @@
 ﻿using DM.Bff.Compras.Extensions;
 using DM.Bff.Compras.Services;
-using DM.Loja.MVC.Extensions;
 using DM.WebAPI.Core.Extensions;
+using DM.WebAPI.Core.Usuario;
 using Polly;
 
 namespace DM.Bff.Compras.Configuration;

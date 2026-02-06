@@ -6,7 +6,7 @@ using DM.Clientes.API.Data.Repository;
 using DM.Core.Mediator;
 using FluentValidation.Results;
 using MediatR;
-using DM.Loja.MVC.Extensions;
+using DM.WebAPI.Core.Usuario;
 
 namespace DM.Clientes.API.Configuration;
 

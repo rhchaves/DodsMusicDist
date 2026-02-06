@@ -1,5 +1,5 @@
 ﻿using DM.Carrinho.API.Data;
-using DM.Loja.MVC.Extensions;
+using DM.WebAPI.Core.Usuario;
 
 namespace DM.Carrinho.API.Configuration;
 

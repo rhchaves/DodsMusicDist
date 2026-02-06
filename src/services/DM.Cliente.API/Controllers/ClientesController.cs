@@ -1,7 +1,7 @@
 ﻿using DM.Clientes.API.Application.Commands;
 using DM.Clientes.API.Models;
 using DM.Core.Mediator;
-using DM.Loja.MVC.Extensions;
+using DM.WebAPI.Core.Usuario;
 using DM.WebAPI.Core.Controllers;
 using Microsoft.AspNetCore.Mvc;
 

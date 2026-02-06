@@ -1,6 +1,6 @@
 ﻿using DM.Carrinho.API.Data;
 using DM.Carrinho.API.Model;
-using DM.Loja.MVC.Extensions;
+using DM.WebAPI.Core.Usuario;
 using DM.WebAPI.Core.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

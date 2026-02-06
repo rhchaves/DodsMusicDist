@@ -1,9 +1,11 @@
 ﻿using DM.Loja.MVC.Extensions;
 using DM.Loja.MVC.Services;
 using DM.Loja.MVC.Services.Handlers;
-using DM.WebAPI.Core.Extensions;
+using DM.WebAPI.Core.Usuario;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Polly;
+using Polly.Extensions.Http;
+using Polly.Retry;
 
 namespace DM.Loja.MVC.Configuration;
 
@@ -42,4 +44,25 @@ public static class DependencyInjectionConfig
 
         #endregion
     }
+
+    #region PollyExtension
+
+    public static class PollyExtensions
+    {
+        public static AsyncRetryPolicy<HttpResponseMessage> EsperarTentar()
+        {
+            var retry = HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .WaitAndRetryAsync(new[]
+                {
+                    TimeSpan.FromSeconds(1),
+                    TimeSpan.FromSeconds(5),
+                    TimeSpan.FromSeconds(10),
+                });
+
+            return retry;
+        }
+    }
+
+    #endregion
 }
