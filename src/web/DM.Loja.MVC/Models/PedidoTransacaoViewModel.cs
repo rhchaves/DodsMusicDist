@@ -1,5 +1,4 @@
 ﻿using DM.Core.Validation;
-using DM.Loja.MVC.Models;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
