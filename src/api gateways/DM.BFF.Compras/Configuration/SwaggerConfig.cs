@@ -1,5 +1,4 @@
-﻿
-using Microsoft.OpenApi;
+﻿using Microsoft.OpenApi;
 
 namespace DM.Bff.Compras.Configuration;
 

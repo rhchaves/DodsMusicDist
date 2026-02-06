@@ -1,5 +1,4 @@
-﻿
-using DM.WebAPI.Core.Usuario;
+﻿using DM.WebAPI.Core.Usuario;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 

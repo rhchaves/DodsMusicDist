@@ -1,7 +1,7 @@
 ﻿using DM.Carrinho.API.Data;
 using DM.Loja.MVC.Extensions;
 
-namespace DM.Catalogo.API.Configuration;
+namespace DM.Carrinho.API.Configuration;
 
 public static class DependencyInjectionConfig
 {

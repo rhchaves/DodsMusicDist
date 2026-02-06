@@ -21,6 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\building blocks\DM.MessageBus\DM.MessageBus.csproj" />
 	  <ProjectReference Include="..\..\building blocks\DM.WebAPI.Core\DM.WebAPI.Core.csproj" />
 	</ItemGroup>
 

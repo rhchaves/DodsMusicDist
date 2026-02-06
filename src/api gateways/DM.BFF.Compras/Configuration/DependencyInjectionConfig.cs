@@ -4,7 +4,7 @@ using DM.Loja.MVC.Extensions;
 using DM.WebAPI.Core.Extensions;
 using Polly;
 
-namespace DM.Bff.Compras.Configuration.Configuration;
+namespace DM.Bff.Compras.Configuration;
 
 public static class DependencyInjectionConfig
 {

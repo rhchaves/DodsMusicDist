@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DM.Bff.Compras.Models;
+﻿namespace DM.Bff.Compras.Models;
 
 public class ItemCarrinhoDTO
 {

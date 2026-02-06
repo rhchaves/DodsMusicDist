@@ -2,7 +2,7 @@
 using DM.WebAPI.Core.Identidade;
 using Microsoft.EntityFrameworkCore;
 
-namespace DM.Catalogo.API.Configuration;
+namespace DM.Carrinho.API.Configuration;
 
 public static class ApiConfig
 {

@@ -37,7 +37,6 @@ public static class JwtConfig
         });
     }
 
-
     public static void UseAutenticacaoConfig(this IApplicationBuilder app)
     {
         app.UseAuthentication();

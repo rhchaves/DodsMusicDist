@@ -7,7 +7,7 @@ using Polly;
 
 namespace DM.Loja.MVC.Configuration;
 
-public static class InjecaoDependenciaConfig
+public static class DependencyInjectionConfig
 {
     public static void RegistrarServicos(this IServiceCollection services, IConfiguration configuration)
     {

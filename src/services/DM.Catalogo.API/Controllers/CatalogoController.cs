@@ -24,8 +24,6 @@ public class CatalogoController : MainController
         return await _produtoRepository.ObterTodos();
     }
 
-    //Foi aplicado ClaimsAuthorize apenas em carater de teste, será removido para deixar o acesso aberto após API finalizada
-    [ClaimsAuthorize("Catalogo", "Ler")]
     [HttpGet("catalogo/produtos/{id}")]
     public async Task<Produto> ProdutoDetalhe(Guid id)
     {

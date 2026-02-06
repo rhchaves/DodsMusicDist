@@ -1,5 +1,4 @@
 using DM.Bff.Compras.Configuration;
-using DM.Bff.Compras.Configuration.Configuration;
 using DM.WebAPI.Core.Identidade;
 
 var builder = WebApplication.CreateBuilder(args);

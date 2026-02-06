@@ -11,10 +11,10 @@ public class RegistroClienteIntegrationHandler : BackgroundService
     private readonly IMessageBus _bus;
     private readonly IServiceProvider _serviceProvider;
 
-    public RegistroClienteIntegrationHandler(IServiceProvider serviceProvider, IMessageBus bus)
+    public RegistroClienteIntegrationHandler(IMessageBus bus, IServiceProvider serviceProvider)
     {
-        _serviceProvider = serviceProvider;
         _bus = bus;
+        _serviceProvider = serviceProvider;
     }
 
     private void SetResponder()

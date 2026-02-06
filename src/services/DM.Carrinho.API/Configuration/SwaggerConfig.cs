@@ -1,6 +1,6 @@
 ﻿using Microsoft.OpenApi;
 
-namespace DM.Catalogo.API.Configuration;
+namespace DM.Carrinho.API.Configuration;
 
 public static class SwaggerConfig
 {

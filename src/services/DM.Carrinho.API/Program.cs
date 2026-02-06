@@ -1,4 +1,4 @@
-using DM.Catalogo.API.Configuration;
+using DM.Carrinho.API.Configuration;
 using DM.WebAPI.Core.Identidade;
 
 var builder = WebApplication.CreateBuilder(args);
