@@ -14,4 +14,4 @@ public class VoucherValidation : SpecValidator<Voucher>
         Add("qtdeSpec", new Rule<Voucher>(qtdeSpec, "Este voucher já foi utilizado"));
         Add("ativoSpec", new Rule<Voucher>(ativoSpec, "Este voucher não está mais ativo"));
     }
-}}
+}

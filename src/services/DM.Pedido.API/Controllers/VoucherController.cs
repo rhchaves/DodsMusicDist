@@ -1,4 +1,6 @@
-﻿using DM.WebAPI.Core.Controllers;
+﻿using DM.Pedidos.API.Application.DTO;
+using DM.Pedidos.API.Application.Queries;
+using DM.WebAPI.Core.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -24,6 +26,6 @@ public class VoucherController : MainController
 
         var voucher = await _voucherQueries.ObterVoucherPorCodigo(codigo);
 
-        return voucher == null ? NotFound() : CustomResponse(voucher);
+        return voucher == null ? NotFound() : ValidarResposta(voucher);
     }
 }
