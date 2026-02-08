@@ -1,4 +1,7 @@
-﻿using DM.WebAPI.Core.Identidade;
+﻿using DM.Identidade.API.Services;
+using DM.WebAPI.Core.Identidade;
+using DM.WebAPI.Core.Usuario;
+using NetDevPack.Security.JwtSigningCredentials.AspNetCore;
 
 namespace DM.Identidade.API.Configuration;
 
@@ -7,6 +10,9 @@ public static class ApiConfig
     public static IServiceCollection AddApiConfig(this IServiceCollection services)
     {
         services.AddControllers();
+
+        services.AddScoped<AutenticacaoServico>();
+        services.AddScoped<IUsuario, Usuario>();
 
         return services;
     }
@@ -25,6 +31,7 @@ public static class ApiConfig
         {
             endpoints.MapControllers();
         });
+        app.UseJwksDiscovery();
 
         return app;
     }

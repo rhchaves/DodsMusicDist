@@ -2,8 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using NetDevPack.Security.JwtExtensions;
 
 namespace DM.WebAPI.Core.Identidade;
 
@@ -15,7 +14,6 @@ public static class JwtConfig
         services.Configure<AppConfig>(appConfigSection);
 
         var appConfig = appConfigSection.Get<AppConfig>();
-        var key = Encoding.ASCII.GetBytes(appConfig.Secret);
 
         services.AddAuthentication(x =>
         {
@@ -23,17 +21,10 @@ public static class JwtConfig
             x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(x =>
         {
-            x.RequireHttpsMetadata = true;
+            x.RequireHttpsMetadata = false;
+            x.BackchannelHttpHandler = new HttpClientHandler { ServerCertificateCustomValidationCallback = delegate { return true; } };
             x.SaveToken = true;
-            x.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidAudience = appConfig.ValidoEm,
-                ValidIssuer = appConfig.Emissor
-            };
+            x.SetJwksOptions(new JwkOptions(appConfig.AutenticacaoJwksUrl));
         });
     }
 
