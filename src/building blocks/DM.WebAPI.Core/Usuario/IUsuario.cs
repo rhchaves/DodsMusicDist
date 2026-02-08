@@ -9,6 +9,7 @@ public interface IUsuario
     Guid ObterUsuarioId();
     string ObterUsuarioEmail();
     string ObterUsuarioToken();
+    string ObterUsuarioRefreshToken();
     bool EstaAutenticado();
     bool PossuiRole(string role);
     IEnumerable<Claim> ObterClaims();

@@ -16,17 +16,22 @@ public class Usuario : IUsuario
 
     public Guid ObterUsuarioId()
     {
-        return EstaAutenticado() ? Guid.Parse(_accessor.HttpContext.User.GetUsuarioId()) : Guid.Empty;
+        return EstaAutenticado() ? Guid.Parse(_accessor.HttpContext.User.ObterUsuarioId()) : Guid.Empty;
     }
 
     public string ObterUsuarioEmail()
     {
-        return EstaAutenticado() ? _accessor.HttpContext.User.GetUsuarioEmail() : "";
+        return EstaAutenticado() ? _accessor.HttpContext.User.ObterUsuarioEmail() : "";
     }
 
     public string ObterUsuarioToken()
     {
-        return EstaAutenticado() ? _accessor.HttpContext.User.GetUsuarioToken() : "";
+        return EstaAutenticado() ? _accessor.HttpContext.User.ObterUsuarioToken() : "";
+    }
+
+    public string ObterUsuarioRefreshToken()
+    {
+        return EstaAutenticado() ? _accessor.HttpContext.User.ObterUsuarioRefreshToken() : "";
     }
 
     public bool EstaAutenticado()

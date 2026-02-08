@@ -10,6 +10,9 @@ public static class IdentidadeConfig
 {
     public static IServiceCollection AddIdentidadeConfig(this IServiceCollection services, IConfiguration configuration)
     {
+        var appSettingsSection = configuration.GetSection("AppTokenConfig");
+        services.Configure<AppTokenConfig>(appSettingsSection);
+        
         services.AddJwksManager(options => options.Algorithm = Algorithm.ES256)
             .PersistKeysToDatabaseStore<AppDbContext>();
 
