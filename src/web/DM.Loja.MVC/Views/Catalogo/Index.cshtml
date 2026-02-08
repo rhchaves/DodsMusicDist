@@ -1,5 +1,5 @@
 ﻿@using DM.Loja.MVC.Extensions
-@model IEnumerable<DM.Loja.MVC.Models.ProdutoViewModel>
+@model PagedViewModel<ProdutoViewModel>
 
 @{
     ViewData["Title"] = "Todos os produtos";
@@ -16,7 +16,7 @@
             <div class="row">
                 @{
                     // Lógica provisória enquanto não tiver contagem de vendas. (Depois exibir por item mais vendido).
-                    @foreach (var produto in Model.OrderByDescending(p => p.QuantidadeEstoque).ThenBy(p => p.Nome))
+                    @foreach (var produto in Model.List.Where(p => p.Ativo).OrderBy(p => p.Nome))
                     {
                         <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 h-100">
                             <a class="text-decoration-none text-dark d-block"
@@ -44,6 +44,9 @@
                     }
                 }
             </div>
+
+            <vc:paginacao modelo-paginado="@Model"></vc:paginacao>
+
         </div>
     </div>
 </section>

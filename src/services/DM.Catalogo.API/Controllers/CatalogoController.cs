@@ -1,6 +1,5 @@
 ﻿using DM.Catalogo.API.Models;
 using DM.WebAPI.Core.Controllers;
-using DM.WebAPI.Core.Identidade;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,14 +18,20 @@ public class CatalogoController : MainController
 
     [AllowAnonymous]
     [HttpGet("catalogo/produtos")]
-    public async Task<IEnumerable<Produto>> Index()
+    public async Task<PagedResult<Produto>> Index([FromQuery] int ps = 8, [FromQuery] int page = 1, [FromQuery] string q = null)
     {
-        return await _produtoRepository.ObterTodos();
+        return await _produtoRepository.ObterTodos(ps, page, q);
     }
 
     [HttpGet("catalogo/produtos/{id}")]
     public async Task<Produto> ProdutoDetalhe(Guid id)
     {
         return await _produtoRepository.ObterPorId(id);
+    }
+
+    [HttpGet("catalogo/produtos/lista/{ids}")]
+    public async Task<IEnumerable<Produto>> ObterProdutosPorId(string ids)
+    {
+        return await _produtoRepository.ObterProdutosPorId(ids);
     }
 }

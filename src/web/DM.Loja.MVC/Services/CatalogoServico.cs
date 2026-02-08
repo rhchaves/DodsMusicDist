@@ -6,7 +6,7 @@ namespace DM.Loja.MVC.Services;
 
 public interface ICatalogoServico
 {
-    Task<IEnumerable<ProdutoViewModel>> ObterTodos();
+    Task<PagedViewModel<ProdutoViewModel>> ObterTodos(int pageSize, int pageIndex, string query = null);
     Task<ProdutoViewModel> ObterPorId(Guid id);
 }
 
@@ -30,12 +30,12 @@ public class CatalogoServico : Servico, ICatalogoServico
         return await DeserializarObjetoResposta<ProdutoViewModel>(resposta);
     }
 
-    public async Task<IEnumerable<ProdutoViewModel>> ObterTodos()
+    public async Task<PagedViewModel<ProdutoViewModel>> ObterTodos(int pageSize, int pageIndex, string query = null)
     {
-        var resposta = await _httpClient.GetAsync("/catalogo/produtos/");
+        var response = await _httpClient.GetAsync($"/catalogo/produtos?ps={pageSize}&page={pageIndex}&q={query}");
 
-        TratarErrosResposta(resposta);
+        TratarErrosResposta(response);
 
-        return await DeserializarObjetoResposta<IEnumerable<ProdutoViewModel>>(resposta);
+        return await DeserializarObjetoResposta<PagedViewModel<ProdutoViewModel>>(response);
     }
 }
