@@ -1,5 +1,5 @@
-﻿using DM.Core.Utils;
-using DM.MessageBus;
+﻿using DM.MessageBus;
+using System.Reflection;
 
 namespace DM.Identidade.API.Configuration;
 
@@ -7,6 +7,6 @@ public static class MessageBusConfig
 {
     public static void AddMessageBusConfig(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddMessageBus(configuration.GetMessageQueueConnection("MessageBus"));
+        services.AddMessageBus(configuration, Assembly.GetAssembly(typeof(Program)));
     }
 }

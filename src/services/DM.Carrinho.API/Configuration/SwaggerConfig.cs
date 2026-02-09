@@ -4,7 +4,7 @@ namespace DM.Carrinho.API.Configuration;
 
 public static class SwaggerConfig
 {
-    public static IServiceCollection AddSwaggerConfig(this IServiceCollection services)
+    public static void AddSwaggerConfig(this IServiceCollection services)
     {
         services.AddSwaggerGen(s =>
         {
@@ -27,15 +27,11 @@ public static class SwaggerConfig
                 BearerFormat = "JWT"
             });
         });
-
-        return services;
     }
 
-    public static IApplicationBuilder UseSwaggerConfig(this IApplicationBuilder app)
+    public static void UseSwaggerConfig(this IApplicationBuilder app)
     {
         app.UseSwagger();
         app.UseSwaggerUI();
-
-        return app;
     }
 }

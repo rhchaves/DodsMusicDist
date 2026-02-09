@@ -1,17 +1,32 @@
-﻿using EasyNetQ;
+﻿using MassTransit;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace DM.MessageBus;
 
 public static class DependencyInjectionExtensions
 {
-    public static IServiceCollection AddMessageBus(this IServiceCollection services, string connection)
+    public static void AddMessageBus(this IServiceCollection services, IConfiguration configuration,
+        params Assembly[] consumerAssemblies)
     {
-        if (string.IsNullOrWhiteSpace(connection)) throw new ArgumentNullException(nameof(connection));
+        services.AddOptions<RabbitMqTransportOptions>()
+            .Bind(configuration.GetSection(nameof(RabbitMqTransportOptions)))
+            .ValidateOnStart();
 
-        services.AddEasyNetQ(connection);
-        services.AddSingleton<IMessageBus, MessageBus>();
-
-        return services;
+        services.AddMassTransit(busRegistration =>
+        {
+            busRegistration.ConfigureHealthCheckOptions(options =>
+            {
+                options.Name = "RabbitMQ";
+                options.Tags.Add("infra");
+            });
+            busRegistration.SetRabbitMqReplyToRequestClientFactory();
+            busRegistration.AddConsumers(consumerAssemblies);
+            busRegistration.UsingRabbitMq((busContext, busConfiguration) =>
+            {
+                busConfiguration.ConfigureEndpoints(busContext);
+            });
+        });
     }
 }

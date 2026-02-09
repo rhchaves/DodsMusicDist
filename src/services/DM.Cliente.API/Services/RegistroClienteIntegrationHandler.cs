@@ -1,49 +1,33 @@
 ﻿using DM.Clientes.API.Application.Commands;
-using DM.Core.Mediator;
 using DM.Core.Messages.Integration;
-using DM.MessageBus;
-using FluentValidation.Results;
+using MassTransit;
+using MediatR;
 
 namespace DM.Clientes.API.Services;
 
-public class RegistroClienteIntegrationHandler : BackgroundService
+public class RegistroClienteIntegrationHandler : IConsumer<UsuarioRegistradoIntegrationEvent>
 {
-    private readonly IMessageBus _bus;
     private readonly IServiceProvider _serviceProvider;
 
-    public RegistroClienteIntegrationHandler(IMessageBus bus, IServiceProvider serviceProvider)
+    public RegistroClienteIntegrationHandler(IServiceProvider serviceProvider)
     {
-        _bus = bus;
         _serviceProvider = serviceProvider;
     }
 
-    private void SetResponder()
+    public async Task Consume(ConsumeContext<UsuarioRegistradoIntegrationEvent> context)
     {
-        _bus. RespondAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(async request =>
-            await RegistrarCliente(request));
-    }
-
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        SetResponder();
-        return Task.CompletedTask;
-    }
-
-    private void OnConnect(object s, EventArgs e)
-    {
-        SetResponder();
+        await context.RespondAsync(await RegistrarCliente(context.Message));
+        while (!context.CancellationToken.IsCancellationRequested)
+            await Task.Delay(TimeSpan.FromSeconds(15), context.CancellationToken);
     }
 
     private async Task<ResponseMessage> RegistrarCliente(UsuarioRegistradoIntegrationEvent message)
     {
         var clienteCommand = new RegistrarClienteCommand(message.Id, message.Nome, message.Email, message.Cpf);
-        ValidationResult sucesso;
 
-        using (var scope = _serviceProvider.CreateScope())
-        {
-            var mediator = scope.ServiceProvider.GetRequiredService<IMediatorHandler>();
-            sucesso = await mediator.EnviarComando(clienteCommand);
-        }
+        using var scope = _serviceProvider.CreateScope();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+        var sucesso = await mediator.Send(clienteCommand);
 
         return new ResponseMessage(sucesso);
     }

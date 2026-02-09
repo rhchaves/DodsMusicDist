@@ -1,8 +1,8 @@
 ﻿using DM.Core.Messages.Integration;
 using DM.Identidade.API.Models;
 using DM.Identidade.API.Services;
-using DM.MessageBus;
 using DM.WebAPI.Core.Controllers;
+using MassTransit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,9 +12,9 @@ namespace DM.Identidade.API.Controllers;
 public class IdentidadeController : MainController
 {
     AutenticacaoServico _autenticacaoServico;
-    private readonly IMessageBus _bus;
+    private readonly IBus _bus;
 
-    public IdentidadeController(AutenticacaoServico autenticacaoServico, IMessageBus bus)
+    public IdentidadeController(AutenticacaoServico autenticacaoServico, IBus bus)
     {
         _autenticacaoServico = autenticacaoServico;
         _bus = bus;
@@ -81,15 +81,17 @@ public class IdentidadeController : MainController
     private async Task<ResponseMessage> RegistrarCliente(UsuarioRegistro usuarioRegistro)
     {
         var usuario = await _autenticacaoServico.UserManager.FindByEmailAsync(usuarioRegistro.Email);
+        ArgumentNullException.ThrowIfNull(usuarioRegistro);
 
         var usuarioRegistrado = new UsuarioRegistradoIntegrationEvent(
             Guid.Parse(usuario.Id), usuarioRegistro.Nome, usuarioRegistro.Email, usuarioRegistro.Cpf);
 
         try
         {
-            return await _bus.RequestAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(usuarioRegistrado);
+            var resposta = await _bus.Request<UsuarioRegistradoIntegrationEvent, ResponseMessage>(usuarioRegistrado);
+            return resposta.Message;
         }
-        catch
+        catch (Exception)
         {
             await _autenticacaoServico.UserManager.DeleteAsync(usuario);
             throw;

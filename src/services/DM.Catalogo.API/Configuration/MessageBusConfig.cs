@@ -1,7 +1,7 @@
 ﻿using DM.MessageBus;
 using System.Reflection;
 
-namespace DM.Carrinho.API.Configuration;
+namespace DM.Catalogo.API.Configuration;
 
 public static class MessageBusConfig
 {

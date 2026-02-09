@@ -1,29 +1,18 @@
 using DM.Clientes.API.Configuration;
+using DM.WebAPI.Core.Configuration;
 using DM.WebAPI.Core.Identidade;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var hostEnvironment = builder.Environment;
-builder.Configuration
-    .SetBasePath(hostEnvironment.ContentRootPath)
-    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{hostEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-    .AddEnvironmentVariables();
-
-if (hostEnvironment.IsDevelopment())
-{
-    builder.Configuration.AddUserSecrets<Program>();
-}
-
 builder.Services.AddApiConfig(builder.Configuration);
 builder.Services.AddJwtConfig(builder.Configuration);
 builder.Services.AddSwaggerConfig();
-builder.Services.AddMediatR(config => { config.RegisterServicesFromAssemblyContaining<Program>(); });
 builder.Services.RegistrarServicos();
+builder.Services.AddMediatR(config => config.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
 builder.Services.AddMessageBusConfig(builder.Configuration);
 
 var app = builder.Build();
 
 app.UseSwaggerConfig();
-app.UseApiConfig(app.Environment);
+app.UseApiCoreConfig(app.Environment);
 app.Run();

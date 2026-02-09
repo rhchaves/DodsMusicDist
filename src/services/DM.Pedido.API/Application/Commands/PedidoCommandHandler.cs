@@ -1,20 +1,23 @@
 ﻿using DM.Core.Messages;
+using DM.Core.Messages.Integration;
 using DM.Pedidos.API.Application.DTO;
 using DM.Pedidos.API.Application.Events;
 using DM.Pedidos.Domain.Pedidos;
 using DM.Pedidos.Domain.Vouchers;
 using DM.Pedidos.Domain.Vouchers.Especificacao;
-using FluentValidation.Results;
+using MassTransit;
 using MediatR;
+using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace DM.Pedidos.API.Application.Commands;
 
 public class PedidoCommandHandler : CommandHandler, IRequestHandler<AdicionarPedidoCommand, ValidationResult>
 {
+    private readonly IBus _bus;
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IVoucherRepository _voucherRepository;
 
-    public PedidoCommandHandler(IVoucherRepository voucherRepository, IPedidoRepository pedidoRepository)
+    public PedidoCommandHandler(IVoucherRepository voucherRepository, IPedidoRepository pedidoRepository, IBus bus)
     {
         _voucherRepository = voucherRepository;
         _pedidoRepository = pedidoRepository;
@@ -35,7 +38,7 @@ public class PedidoCommandHandler : CommandHandler, IRequestHandler<AdicionarPed
         if (!ValidarPedido(pedido)) return ValidationResult;
 
         // Processar pagamento
-        if (!ProcessarPagamento(pedido)) return ValidationResult;
+        if (!await ProcessarPagamento(pedido, message)) return ValidationResult;
 
         // Se pagamento tudo ok!
         pedido.AutorizarPedido();
@@ -118,8 +121,26 @@ public class PedidoCommandHandler : CommandHandler, IRequestHandler<AdicionarPed
         return true;
     }
 
-    public bool ProcessarPagamento(Pedido pedido)
+    public async Task<bool> ProcessarPagamento(Pedido pedido, AdicionarPedidoCommand mensagem)
     {
-        return true;
+        var pedidoIniciado = new PedidoIniciadoIntegrationEvent
+        {
+            PedidoId = pedido.Id,
+            ClienteId = pedido.ClienteId,
+            Valor = pedido.ValorTotal,
+            TipoPagamento = 1, // fixed - change if we have more types
+            NomeCartao = mensagem.NomeCartao,
+            NumeroCartao = mensagem.NumeroCartao,
+            MesAnoVencimento = mensagem.ExpiracaoCartao,
+            CVV = mensagem.CvvCartao
+        };
+
+        var resultado = await _bus.Request<PedidoIniciadoIntegrationEvent, ResponseMessage>(pedidoIniciado);
+
+        if (resultado.Message.ValidationResult.IsValid) return true;
+
+        foreach (var error in resultado.Message.ValidationResult.Errors) AdicionarErro(error.ErrorMessage);
+
+        return false;
     }
 }

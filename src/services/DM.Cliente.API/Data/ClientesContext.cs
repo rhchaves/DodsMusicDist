@@ -1,21 +1,21 @@
 ﻿using DM.Clientes.API.Models;
 using DM.Core.Data;
 using DM.Core.DomainObjects;
-using DM.Core.Mediator;
 using DM.Core.Messages;
 using FluentValidation.Results;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace DM.Clientes.API.Data;
 
 public sealed class ClientesContext : DbContext, IUnitOfWork
 {
-    private readonly IMediatorHandler _mediatorHandler;
+    //private readonly IMediatorHandler _mediator;
+    private readonly IMediator _mediator;
 
-    public ClientesContext(DbContextOptions<ClientesContext> options, IMediatorHandler mediatorHandler)
-        : base(options)
+    public ClientesContext(DbContextOptions<ClientesContext> options, IMediator mediator) : base(options)
     {
-        _mediatorHandler = mediatorHandler;
+        _mediator = mediator;
         ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         ChangeTracker.AutoDetectChangesEnabled = false;
     }
@@ -41,7 +41,7 @@ public sealed class ClientesContext : DbContext, IUnitOfWork
     public async Task<bool> Commit()
     {
         var sucesso = await base.SaveChangesAsync() > 0;
-        if (sucesso) await _mediatorHandler.PublicarEventos(this);
+        if (sucesso) await _mediator.PublicarEventos(this);
 
         return sucesso;
     }
@@ -49,7 +49,7 @@ public sealed class ClientesContext : DbContext, IUnitOfWork
 
 public static class MediatorExtension
 {
-    public static async Task PublicarEventos<T>(this IMediatorHandler mediator, T ctx) where T : DbContext
+    public static async Task PublicarEventos<T>(this IMediator mediator, T ctx) where T : DbContext
     {
         var domainEntities = ctx.ChangeTracker
             .Entries<Entidade>()
@@ -62,12 +62,13 @@ public static class MediatorExtension
         domainEntities.ToList()
             .ForEach(entity => entity.Entity.LimparEventos());
 
-        var tasks = domainEvents
-            .Select(async (domainEvent) =>
-            {
-                await mediator.PublicarEvento(domainEvent);
-            });
+        //var tasks = domainEvents
+        //    .Select(async (domainEvent) =>
+        //    {
+        //        await mediator.PublicarEvento(domainEvent);
+        //    });
 
-        await Task.WhenAll(tasks);
+        //await Task.WhenAll(tasks);
+        foreach (var task in domainEvents) await mediator.Publish(task);
     }
 }
