@@ -15,31 +15,42 @@
         <div class="container pt-4">
             <div class="row">
                 @{
-                    // Lógica provisória enquanto não tiver contagem de vendas. (Depois exibir por item mais vendido).
-                    @foreach (var produto in Model.List.Where(p => p.Ativo).OrderBy(p => p.Nome))
+                    if (Model.List.Any())
                     {
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 h-100">
-                            <a class="text-decoration-none text-dark d-block"
-                               asp-controller="Catalogo" asp-action="ProdutoDetalhe" asp-route-id="@produto.Id">
+                        // Lógica provisória enquanto não tiver contagem de vendas. (Depois exibir por item mais vendido).
+                        @foreach (var produto in Model.List.Where(p => p.Ativo).OrderBy(p => p.Nome))
+                        {
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 h-100">
+                                <a class="text-decoration-none text-dark d-block"
+                                   asp-controller="Catalogo" asp-action="ProdutoDetalhe" asp-route-id="@produto.Id">
 
-                                <div href="#" class="card card-product-grid overflow-hidden">
-                                    <div class="produto-img-wrapper">
-                                        <img class="img-wrap" src="~/images/produtos/@produto.Imagem" alt="@produto.Nome">
+                                    <div href="#" class="card card-product-grid overflow-hidden">
+                                        <div class="produto-img-wrapper">
+                                            <img class="img-wrap" src="~/images/produtos/@produto.Imagem" alt="@produto.Nome">
+                                        </div>
+
+                                        <figcaption class="info-wrap h-75">
+                                            <b class="produto-nome" title="@produto.Nome">@produto.Nome</b>
+                                            <small class="card-text">
+                                                @this.MensagemEstoque(produto.QuantidadeEstoque)<br />
+                                                @(produto.Descricao?.Length > 80 ? produto.Descricao.Substring(0, 80) + "..." : produto.Descricao)
+                                            </small>
+                                        </figcaption>
+
+                                        <div class="card-footer">
+                                            <h3>@this.FormatoMoeda(produto.Valor)</h3>
+                                        </div>
                                     </div>
-
-                                    <figcaption class="info-wrap h-75">
-                                        <b class="produto-nome" title="@produto.Nome">@produto.Nome</b>
-                                        <small class="card-text">
-                                            @this.MensagemEstoque(produto.QuantidadeEstoque)<br />
-                                            @(produto.Descricao?.Length > 80 ? produto.Descricao.Substring(0, 80) + "..." : produto.Descricao)
-                                        </small>
-                                    </figcaption>
-
-                                    <div class="card-footer">
-                                        <h3>@this.FormatoMoeda(produto.Valor)</h3>
-                                    </div>
-                                </div>
-                            </a>
+                                </a>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="col-md-12" style="text-align: center">
+                            <h2>
+                                Oh não! 😮 <br><br> Não há produtos disponíveis. Tente pesquisar com outros critérios.
+                            </h2>
                         </div>
                     }
                 }

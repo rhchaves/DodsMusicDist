@@ -1,7 +1,7 @@
 ﻿using DM.Carrinho.API.Data;
 using DM.Carrinho.API.Model;
-using DM.WebAPI.Core.Usuario;
 using DM.WebAPI.Core.Controllers;
+using DM.WebAPI.Core.Usuario;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +11,7 @@ namespace DM.Carrinho.API.Controllers;
 [Authorize]
 public class CarrinhoController : MainController
 {
+    private readonly ICollection<string> _erros = new List<string>();
     private readonly IUsuario _user;
     private readonly CarrinhoContext _context;
 
@@ -36,7 +37,7 @@ public class CarrinhoController : MainController
         else
             ManipularCarrinhoExistente(carrinho, item);
 
-        if (!OperacaoValida()) return ValidarResposta();
+        if (_erros.Any()) return ValidarResposta();
 
         await PersistirDados();
         return ValidarResposta();
@@ -52,7 +53,7 @@ public class CarrinhoController : MainController
         carrinho.AtualizarUnidades(itemCarrinho, item.Quantidade);
 
         ValidarCarrinho(carrinho);
-        if (!OperacaoValida()) return ValidarResposta();
+        if (_erros.Any()) return ValidarResposta();
 
         _context.CarrinhoItens.Update(itemCarrinho);
         _context.CarrinhoCliente.Update(carrinho);
@@ -70,7 +71,7 @@ public class CarrinhoController : MainController
         if (itemCarrinho == null) return ValidarResposta();
 
         ValidarCarrinho(carrinho);
-        if (!OperacaoValida()) return ValidarResposta();
+        if (_erros.Any()) return ValidarResposta();
 
         carrinho.RemoverItem(itemCarrinho);
 
@@ -81,12 +82,24 @@ public class CarrinhoController : MainController
         return ValidarResposta();
     }
 
+    [HttpPost]
+    [Route("carrinho/aplicar-voucher")]
+    public async Task<IActionResult> AplicarVoucher(Voucher voucher)
+    {
+        var carrinho = await ObterCarrinhoCliente();
+
+        carrinho.AplicarVoucher(voucher);
+
+        _context.CarrinhoCliente.Update(carrinho);
+
+        await PersistirDados();
+        return ValidarResposta();
+    }
+
     #region Métodos privados
     private async Task<CarrinhoCliente> ObterCarrinhoCliente()
     {
-        return await _context.CarrinhoCliente
-            .Include(c => c.Itens)
-            .FirstOrDefaultAsync(c => c.ClienteId == _user.ObterUsuarioId());
+        return await _context.CarrinhoCliente.Include(c => c.Itens).FirstOrDefaultAsync(c => c.ClienteId == _user.ObterUsuarioId());
     }
 
     private void ManipularNovoCarrinho(CarrinhoItem item)
@@ -106,13 +119,9 @@ public class CarrinhoController : MainController
         ValidarCarrinho(carrinho);
 
         if (produtoItemExistente)
-        {
             _context.CarrinhoItens.Update(carrinho.ObterPorProdutoId(item.ProdutoId));
-        }
         else
-        {
             _context.CarrinhoItens.Add(item);
-        }
 
         _context.CarrinhoCliente.Update(carrinho);
     }

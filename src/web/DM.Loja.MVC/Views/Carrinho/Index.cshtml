@@ -1,5 +1,5 @@
 ﻿@using DM.Loja.MVC.Extensions
-@model DM.Loja.MVC.Models.CarrinhoViewModel
+@model CarrinhoViewModel
 
 @{
     ViewData["Title"] = "Meu carrinho de compras";
@@ -16,8 +16,6 @@
                 <div class="row">
                     <main class="col-md-9">
                         <div class="card">
-
-
                             <table class="table table-borderless table-shopping-cart">
                                 <thead class="text-muted">
                                     <tr class="small text-uppercase">
@@ -29,67 +27,66 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @{
-                                        foreach (var item in Model.Itens)
-                                        {
-                                            <tr>
+                                @{
+                                    foreach (var item in Model.Itens)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <figure class="itemside">
+                                                    <div class="aside">
+                                                        <img src="~/images/produtos/@item.Imagem" alt="@item.Nome" class="img-sm">
+                                                    </div>
+                                                    <figcaption class="info">
+                                                        <a asp-controller="Catalogo" asp-action="ProdutoDetalhe" asp-route-id="@item.ProdutoId"><h6 style="padding-top: 10px" class="title text-dark">@item.Nome</h6></a>
+                                                        <p class="text-muted small">@this.UnidadesPorProduto(item.Quantidade)</p>
+                                                    </figcaption>
+                                                </figure>
+                                            </td>
+                                            <td>
+                                                <div class="price-wrap">
+                                                    <var class="price"> @this.FormatoMoeda(item.Valor * item.Quantidade)</var>
+                                                    <small class="text-muted"> @this.FormatoMoeda(item.Valor) cada</small>
+                                                </div>
+                                            </td>
+                                            <form method="post" asp-controller="Carrinho" asp-action="AtualizarItemCarrinho">
                                                 <td>
-                                                    <figure class="itemside">
-                                                        <div class="aside">
-                                                            <img src="~/images/produtos/@item.Imagem" alt="@item.Nome" class="img-sm">
-                                                        </div>
-                                                        <figcaption class="info">
-                                                            <a asp-controller="Catalogo" asp-action="ProdutoDetalhe" asp-route-id="@item.ProdutoId"><h6 style="padding-top: 10px" class="title text-dark">@item.Nome</h6></a>
-                                                            <p class="text-muted small">@this.UnidadesPorProduto(item.Quantidade)</p>
-                                                        </figcaption>
-                                                    </figure>
+
+                                                    <input type="hidden" id="ProdutoId" name="ProdutoId" value="@item.ProdutoId" />
+
+                                                    <div class="text-left">
+                                                        <select id="Quantidade" name="Quantidade" style="width: 80px" class="form-control">
+                                                            @{
+                                                                @Html.Raw(this.SelectOptionsPorQuantidade(5, item.Quantidade))
+                                                            }
+                                                        </select>
+                                                    </div>
+
+
                                                 </td>
                                                 <td>
-                                                    <div class="price-wrap">
-                                                        <var class="price"> @this.FormatoMoeda(item.Valor * item.Quantidade)</var>
-                                                        <small class="text-muted"> @this.FormatoMoeda(item.Valor) cada</small>
+                                                    <div class="text-right">
+                                                        <button type="submit" class="btn btn-success">
+                                                            <i class="fas fa-sync"></i>
+                                                        </button>
                                                     </div>
                                                 </td>
-                                                <form method="post" asp-controller="Carrinho" asp-action="AtualizarItemCarrinho">
-                                                    <td>
+                                            </form>
+                                            <td>
+                                                <form method="post" asp-controller="Carrinho" asp-action="RemoverItemCarrinho">
+                                                    <div>
 
                                                         <input type="hidden" id="ProdutoId" name="ProdutoId" value="@item.ProdutoId" />
 
-                                                        <div class="text-left">
-                                                            <select id="Quantidade" name="Quantidade" style="width: 80px" class="form-control">
-                                                                @{
-                                                                    @Html.Raw(this.SelectOptionsPorQuantidade(5, item.Quantidade))
-                                                                }
-                                                            </select>
-                                                        </div>
+                                                        <button type="submit" class="btn btn-danger">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
 
-
-                                                    </td>
-                                                    <td>
-                                                        <div class="text-right">
-                                                            <button type="submit" class="btn btn-success">
-                                                                <i class="fas fa-sync"></i>
-                                                            </button>
-                                                        </div>
-                                                    </td>
+                                                    </div>
                                                 </form>
-                                                <td>
-                                                    <form method="post" asp-controller="Carrinho" asp-action="RemoverItemCarrinho">
-                                                        <div>
-
-                                                            <input type="hidden" id="ProdutoId" name="ProdutoId" value="@item.ProdutoId" />
-
-                                                            <button type="submit" class="btn btn-danger">
-                                                                <i class="fas fa-trash-alt"></i>
-                                                            </button>
-
-                                                        </div>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                        }
+                                            </td>
+                                        </tr>
                                     }
-
+                                }
                                 </tbody>
                             </table>
 

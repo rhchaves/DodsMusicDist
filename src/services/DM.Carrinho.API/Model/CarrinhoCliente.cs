@@ -10,8 +10,13 @@ namespace DM.Carrinho.API.Model
         public Guid Id { get; set; }
         public Guid ClienteId { get; set; }
         public decimal ValorTotal { get; set; }
-        public List<CarrinhoItem> Itens { get; set; } = new List<CarrinhoItem>();
+        public List<CarrinhoItem> Itens { get; set; } = new();
         public ValidationResult ValidationResult { get; set; }
+
+        public bool VoucherUtilizado { get; set; }
+        public decimal? Desconto { get; set; }
+
+        public Voucher? Voucher { get; set; }
 
         public CarrinhoCliente(Guid clienteId)
         {
@@ -21,9 +26,45 @@ namespace DM.Carrinho.API.Model
 
         public CarrinhoCliente() { }
 
+        public void AplicarVoucher(Voucher voucher)
+        {
+            Voucher = voucher;
+            VoucherUtilizado = true;
+            CalcularValorCarrinho();
+        }
+
         internal void CalcularValorCarrinho()
         {
             ValorTotal = Itens.Sum(p => p.CalcularValor());
+            CalcularValorTotalDesconto();
+        }
+
+        private void CalcularValorTotalDesconto()
+        {
+            if (!VoucherUtilizado) return;
+
+            decimal desconto = 0;
+            var valor = ValorTotal;
+
+            if (Voucher.TipoDesconto == TipoDescontoVoucher.Porcentagem)
+            {
+                if (Voucher.Percentual.HasValue)
+                {
+                    desconto = (valor * Voucher.Percentual.Value) / 100;
+                    valor -= desconto;
+                }
+            }
+            else
+            {
+                if (Voucher.ValorDesconto.HasValue)
+                {
+                    desconto = Voucher.ValorDesconto.Value;
+                    valor -= desconto;
+                }
+            }
+
+            ValorTotal = valor < 0 ? 0 : valor;
+            Desconto = desconto;
         }
 
         internal bool CarrinhoItemExistente(CarrinhoItem item)

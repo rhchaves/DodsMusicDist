@@ -20,7 +20,7 @@ public class CarrinhoItem
     public Guid CarrinhoId { get; set; }
 
     [JsonIgnore]
-    public CarrinhoCliente CarrinhoCliente { get; set; }
+    public CarrinhoCliente? CarrinhoCliente { get; set; }
 
     internal void AssociarCarrinho(Guid carrinhoId)
     {
@@ -62,6 +62,10 @@ public class CarrinhoItem
             RuleFor(c => c.Quantidade)
                 .GreaterThan(0)
                 .WithMessage(item => $"A quantidade miníma para o {item.Nome} é 1");
+
+            RuleFor(c => c.Quantidade)
+                .LessThanOrEqualTo(CarrinhoCliente.MAX_QUANTIDADE_ITEM)
+                .WithMessage(item => $"A quantidade máxima do {item.Nome} é {CarrinhoCliente.MAX_QUANTIDADE_ITEM}");
 
             RuleFor(c => c.Valor)
                 .GreaterThan(0)

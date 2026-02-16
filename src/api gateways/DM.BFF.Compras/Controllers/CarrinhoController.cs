@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DM.Bff.Compras.Controllers;
 
 [Authorize]
+[Route("compras/carrinho")]
 public class CarrinhoController : MainController
 {
     private readonly ICarrinhoServico _carrinhoServico;
@@ -21,14 +22,14 @@ public class CarrinhoController : MainController
     }
 
     [HttpGet]
-    [Route("compras/carrinho")]
+    [Route("")]
     public async Task<IActionResult> Index()
     {
-        return ValidarResposta();
+        return ValidarResposta( await _carrinhoServico.ObterCarrinho());
     }
 
     [HttpGet]
-    [Route("compras/carrinho-quantidade")]
+    [Route("quantidade")]
     public async Task<int> ObterQuantidadeCarrinho()
     {
         var quantidade = await _carrinhoServico.ObterCarrinho();
@@ -36,39 +37,39 @@ public class CarrinhoController : MainController
     }
 
     [HttpPost]
-    [Route("compras/carrinho/items")]
-    public async Task<IActionResult> AdicionarItemCarrinho(ItemCarrinhoDTO itemProduto)
+    [Route("items")]
+    public async Task<IActionResult> AdicionarItemCarrinho(ItemCarrinhoDTO itemCarrinho)
     {
-        var produto = await _catalogoServico.ObterPorId(itemProduto.ProdutoId);
+        var produto = await _catalogoServico.ObterPorId(itemCarrinho.ProdutoId);
 
-        await ValidarItemCarrinho(produto, itemProduto.Quantidade, true);
+        await ValidarItemCarrinho(produto, itemCarrinho.Quantidade, true);
         if (!OperacaoValida()) return ValidarResposta();
 
-        itemProduto.Nome = produto.Nome;
-        itemProduto.Valor = produto.Valor;
-        itemProduto.Imagem = produto.Imagem;
+        PreencherDadosDoProduto(itemCarrinho, produto);
 
-        var resposta = await _carrinhoServico.AdicionarItemCarrinho(itemProduto);
+        var resposta = await _carrinhoServico.AdicionarItemCarrinho(itemCarrinho);
 
         return ValidarResposta();
     }
 
     [HttpPut]
-    [Route("compras/carrinho/items/{produtoId}")]
-    public async Task<IActionResult> AtualizarItemCarrinho(Guid produtoId, ItemCarrinhoDTO itemProduto)
+    [Route("items/{produtoId}")]
+    public async Task<IActionResult> AtualizarItemCarrinho(Guid produtoId, ItemCarrinhoDTO itemCarrinho)
     {
         var produto = await _catalogoServico.ObterPorId(produtoId);
 
-        await ValidarItemCarrinho(produto, itemProduto.Quantidade);
+        await ValidarItemCarrinho(produto, itemCarrinho.Quantidade);
         if (!OperacaoValida()) return ValidarResposta();
+        
+        PreencherDadosDoProduto(itemCarrinho, produto);
 
-        var resposta = await _carrinhoServico.AtualizarItemCarrinho(produtoId, itemProduto);
+        var resposta = await _carrinhoServico.AtualizarItemCarrinho(produtoId, itemCarrinho);
 
         return ValidarResposta();
     }
 
     [HttpDelete]
-    [Route("compras/carrinho/items/{produtoId}")]
+    [Route("items/{produtoId}")]
     public async Task<IActionResult> RemoverItemCarrinho(Guid produtoId)
     {
         var produto = await _catalogoServico.ObterPorId(produtoId);
@@ -85,7 +86,7 @@ public class CarrinhoController : MainController
     }
 
     [HttpPost]
-    [Route("compras/carrinho/aplicar-voucher")]
+    [Route("aplicar-voucher")]
     public async Task<IActionResult> AplicarVoucher([FromBody] string voucherCodigo)
     {
         var voucher = await _pedidoServico.ObterVoucherPorCodigo(voucherCodigo);
@@ -115,5 +116,13 @@ public class CarrinhoController : MainController
         }
 
         if (quantidade > produto.QuantidadeEstoque) AdicionarErroProcessamento($"O produto {produto.Nome} possui {produto.QuantidadeEstoque} unidades em estoque, você selecionou {quantidade}");
+    }
+
+    private static void PreencherDadosDoProduto(ItemCarrinhoDTO itemCarrinho, ItemProdutoDTO itemProduto)
+    {
+        itemCarrinho.ProdutoId = itemProduto.Id;
+        itemCarrinho.Nome = itemProduto.Nome;
+        itemCarrinho.Valor = itemProduto.Valor;
+        itemCarrinho.Imagem = itemProduto.Imagem;
     }
 }
