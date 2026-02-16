@@ -32,10 +32,10 @@ public class CatalogoServico : Servico, ICatalogoServico
 
     public async Task<PagedViewModel<ProdutoViewModel>> ObterTodos(int pageSize, int pageIndex, string query = null)
     {
-        var response = await _httpClient.GetAsync($"/catalogo/produtos?ps={pageSize}&page={pageIndex}&q={query}");
+        var resposta = await _httpClient.GetAsync($"/catalogo/produtos?ps={pageSize}&page={pageIndex}&q={query}");
 
-        TratarErrosResposta(response);
+        TratarErrosResposta(resposta);
 
-        return await DeserializarObjetoResposta<PagedViewModel<ProdutoViewModel>>(response);
+        return await DeserializarObjetoResposta<PagedViewModel<ProdutoViewModel>>(resposta);
     }
 }

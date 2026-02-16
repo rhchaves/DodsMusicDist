@@ -4,7 +4,7 @@ namespace DM.Pedidos.API.Configuration;
 
 public static class SwaggerConfig
 {
-    public static IServiceCollection AddSwaggerConfig(this IServiceCollection services)
+    public static void AddSwaggerConfig(this IServiceCollection services)
     {
         services.AddSwaggerGen(s =>
         {
@@ -22,20 +22,16 @@ public static class SwaggerConfig
                 Description = "Insira o token JWT desta maneira: Bearer {seu token}",
                 Name = "Authorization",
                 In = ParameterLocation.Header,
-                Type = SecuritySchemeType.Http,
+                Type = SecuritySchemeType.ApiKey,
                 Scheme = "Bearer",
                 BearerFormat = "JWT"
             });
         });
-
-        return services;
     }
 
-    public static IApplicationBuilder UseSwaggerConfig(this IApplicationBuilder app)
+    public static void UseSwaggerConfig(this IApplicationBuilder app)
     {
         app.UseSwagger();
-        app.UseSwaggerUI();
-
-        return app;
+        app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"); });
     }
 }

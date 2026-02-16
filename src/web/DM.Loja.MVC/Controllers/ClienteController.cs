@@ -18,9 +18,9 @@ public class ClienteController : MainController
     [HttpPost]
     public async Task<IActionResult> NovoEndereco(EnderecoViewModel endereco)
     {
-        var response = await _clienteServico.AdicionarEndereco(endereco);
+        var resposta = await _clienteServico.AdicionarEndereco(endereco);
 
-        if (RespostaPossuiErros(response)) TempData["Erros"] =
+        if (RespostaPossuiErros(resposta)) TempData["Erros"] =
             ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList();
 
         return RedirectToAction("EnderecoEntrega", "Pedido");

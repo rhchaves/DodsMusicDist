@@ -1,5 +1,6 @@
 ﻿using DM.Pagamentos.API.Data;
 using DM.Pagamentos.API.Facade;
+using DM.WebAPI.Core.Configuration;
 using DM.WebAPI.Core.Identidade;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,29 +8,13 @@ namespace DM.Pagamentos.API.Configuration;
 
 public static class ApiConfig
 {
-    public static IServiceCollection AddApiConfig(this IServiceCollection services, IConfiguration configuration)
+    public static void AddApiConfig(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<PagamentosContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
-        services.AddControllers();
-
-        services.Configure<PagamentoConfig>(configuration.GetSection("PagamentoConfig"));
-
-        services.AddCors(options =>
-        {
-            options.AddPolicy("Total",
-                builder =>
-                    builder
-                        .AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader());
-        });
-
-        return services;
+        services.AddApiCoreConfig(configuration).UseDbContext<PagamentosContext>(configuration)
+            .Configure<PagamentoConfig>(configuration.GetSection("PagamentoConfig"));
     }
 
-    public static IApplicationBuilder UseApiConfig(this IApplicationBuilder app, IWebHostEnvironment env)
+    public static void UseApiConfig(this IApplicationBuilder app, IWebHostEnvironment env)
     {
         if (env.IsDevelopment())
         {
@@ -44,8 +29,6 @@ public static class ApiConfig
         {
             endpoints.MapControllers();
         });
-
-        return app;
     }
 }
 

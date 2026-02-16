@@ -23,17 +23,17 @@ public interface IAutenticacaoServico
 public class AutenticacaoServico : Servico, IAutenticacaoServico
 {
     private readonly HttpClient _httpClient;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     private readonly IUsuario _usuario;
-    private readonly IAuthenticationService _authenticationService;
 
-    public AutenticacaoServico(HttpClient httpClient, IOptions<AppConfig> config, IUsuario usuario, IAuthenticationService authenticationService)
+    public AutenticacaoServico(HttpClient httpClient, IOptions<AppConfig> config, IUsuario usuario, IHttpContextAccessor httpContextAccessor)
     {
         httpClient.BaseAddress = new Uri(config.Value.AutenticacaoUrl);
 
         _httpClient = httpClient;
         _usuario = usuario;
-        _authenticationService = authenticationService;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<UsuarioRespostaLogin> Login(UsuarioLogin usuarioLogin)
@@ -74,17 +74,17 @@ public class AutenticacaoServico : Servico, IAutenticacaoServico
     {
         var refreshTokenContent = ObterConteudo(refreshToken);
 
-        var response = await _httpClient.PostAsync("/api/identidade/refresh-token", refreshTokenContent);
+        var resposta = await _httpClient.PostAsync("/api/identidade/refresh-token", refreshTokenContent);
 
-        if (!TratarErrosResposta(response))
+        if (!TratarErrosResposta(resposta))
         {
             return new UsuarioRespostaLogin
             {
-                ResultadoResposta = await DeserializarObjetoResposta<ResponseResult>(response)
+                ResultadoResposta = await DeserializarObjetoResposta<ResponseResult>(resposta)
             };
         }
 
-        return await DeserializarObjetoResposta<UsuarioRespostaLogin>(response);
+        return await DeserializarObjetoResposta<UsuarioRespostaLogin>(resposta);
     }
 
     public async Task RealizarLogin(UsuarioRespostaLogin resposta)
@@ -104,17 +104,13 @@ public class AutenticacaoServico : Servico, IAutenticacaoServico
             IsPersistent = true
         };
 
-        await _authenticationService.SignInAsync(
-            _usuario.ObterHttpContext(),
-            CookieAuthenticationDefaults.AuthenticationScheme,
-            new ClaimsPrincipal(claimsIdentity),
-            authProperties);
+        await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(claimsIdentity), authProperties);
     }
 
     public async Task Logout()
     {
-        await _authenticationService.SignOutAsync(
-            _usuario.ObterHttpContext(),
+        await _httpContextAccessor.HttpContext!.SignOutAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
             null);
     }
@@ -137,12 +133,10 @@ public class AutenticacaoServico : Servico, IAutenticacaoServico
     {
         var resposta = await UtilizarRefreshToken(_usuario.ObterUsuarioRefreshToken());
 
-        if (resposta.AccessToken != null && resposta.ResultadoResposta == null)
-        {
-            await RealizarLogin(resposta);
-            return true;
-        }
+        if (resposta.AccessToken == null || resposta.ResultadoResposta != null) return false;
 
-        return false;
+            await RealizarLogin(resposta);
+
+        return true;
     }
 }

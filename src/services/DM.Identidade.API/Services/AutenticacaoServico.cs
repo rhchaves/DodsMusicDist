@@ -17,16 +17,18 @@ public class AutenticacaoServico
 {
     public readonly SignInManager<IdentityUser> SignInManager;
     public readonly UserManager<IdentityUser> UserManager;
+    private readonly AppConfig _appSettings;
     private readonly AppTokenConfig _appTokenConfig;
     private readonly AppDbContext _context;
     private readonly IJsonWebKeySetService _jwksService;
     private readonly IUsuario _usuario;
 
-    public AutenticacaoServico(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager,
+    public AutenticacaoServico(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, IOptions<AppConfig> appSettings,
         IOptions<AppTokenConfig> appTokenConfig, AppDbContext context, IJsonWebKeySetService jwksService, IUsuario usuario)
     {
         SignInManager = signInManager;
         UserManager = userManager;
+        _appSettings = appSettings.Value;
         _appTokenConfig = appTokenConfig.Value;
         _jwksService = jwksService;
         _usuario = usuario;

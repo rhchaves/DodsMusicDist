@@ -11,8 +11,7 @@ public class PagamentoService : IPagamentoService
     private readonly IPagamentoFacade _pagamentoFacade;
     private readonly IPagamentoRepository _pagamentoRepository;
 
-    public PagamentoService(IPagamentoFacade pagamentoFacade,
-                            IPagamentoRepository pagamentoRepository)
+    public PagamentoService(IPagamentoFacade pagamentoFacade, IPagamentoRepository pagamentoRepository)
     {
         _pagamentoFacade = pagamentoFacade;
         _pagamentoRepository = pagamentoRepository;
@@ -25,8 +24,7 @@ public class PagamentoService : IPagamentoService
 
         if (transacao.Status != StatusTransacao.Autorizado)
         {
-            validationResult.Errors.Add(new ValidationFailure("Pagamento",
-                    "Pagamento recusado, entre em contato com a sua operadora de cartão"));
+            validationResult.Errors.Add(new ValidationFailure("Pagamento", "Pagamento recusado, entre em contato com a sua operadora de cartão"));
 
             return new ResponseMessage(validationResult);
         }
@@ -36,8 +34,7 @@ public class PagamentoService : IPagamentoService
 
         if (!await _pagamentoRepository.UnitOfWork.Commit())
         {
-            validationResult.Errors.Add(new ValidationFailure("Pagamento",
-                "Houve um erro ao realizar o pagamento."));
+            validationResult.Errors.Add(new ValidationFailure("Pagamento", "Houve um erro ao realizar o pagamento."));
 
             // Cancelar pagamento no gateway
             await CancelarPagamento(pagamento.PedidoId);
@@ -60,8 +57,7 @@ public class PagamentoService : IPagamentoService
 
         if (transacao.Status != StatusTransacao.Pago)
         {
-            validationResult.Errors.Add(new ValidationFailure("Pagamento",
-                $"Não foi possível capturar o pagamento do pedido {pedidoId}"));
+            validationResult.Errors.Add(new ValidationFailure("Pagamento", $"Não foi possível capturar o pagamento do pedido {pedidoId}"));
 
             return new ResponseMessage(validationResult);
         }
@@ -71,8 +67,7 @@ public class PagamentoService : IPagamentoService
 
         if (!await _pagamentoRepository.UnitOfWork.Commit())
         {
-            validationResult.Errors.Add(new ValidationFailure("Pagamento",
-                $"Não foi possível persistir a captura do pagamento do pedido {pedidoId}"));
+            validationResult.Errors.Add(new ValidationFailure("Pagamento", $"Não foi possível persistir a captura do pagamento do pedido {pedidoId}"));
 
             return new ResponseMessage(validationResult);
         }
@@ -92,8 +87,7 @@ public class PagamentoService : IPagamentoService
 
         if (transacao.Status != StatusTransacao.Cancelado)
         {
-            validationResult.Errors.Add(new ValidationFailure("Pagamento",
-                $"Não foi possível cancelar o pagamento do pedido {pedidoId}"));
+            validationResult.Errors.Add(new ValidationFailure("Pagamento", $"Não foi possível cancelar o pagamento do pedido {pedidoId}"));
 
             return new ResponseMessage(validationResult);
         }
@@ -103,8 +97,7 @@ public class PagamentoService : IPagamentoService
 
         if (!await _pagamentoRepository.UnitOfWork.Commit())
         {
-            validationResult.Errors.Add(new ValidationFailure("Pagamento",
-                $"Não foi possível persistir o cancelamento do pagamento do pedido {pedidoId}"));
+            validationResult.Errors.Add(new ValidationFailure("Pagamento", $"Não foi possível persistir o cancelamento do pagamento do pedido {pedidoId}"));
 
             return new ResponseMessage(validationResult);
         }

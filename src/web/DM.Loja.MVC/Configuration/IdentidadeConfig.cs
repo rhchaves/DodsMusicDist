@@ -9,6 +9,7 @@ public static class IdentidadeConfig
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
             {
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
                 options.LoginPath = "/login";
                 options.AccessDeniedPath = "/erro/403";
             });

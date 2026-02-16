@@ -44,7 +44,7 @@ public class ComprasBffServico : Servico, IComprasBffServico
     }
     public async Task<int> ObterQuantidadeCarrinho()
     {
-        var resposta = await _httpClient.GetAsync("/compras/carrinho-quantidade/");
+        var resposta = await _httpClient.GetAsync("/compras/carrinho/quantidade/");
 
         TratarErrosResposta(resposta);
 

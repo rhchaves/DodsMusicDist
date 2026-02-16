@@ -17,6 +17,15 @@ public static class SwaggerConfig
                 License = new OpenApiLicense() { Name = "MIT", Url = new Uri("https://opensource.org/licenses/MIT") }
             });
 
+            s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Description = "Insira o token JWT desta maneira: Bearer {seu token}",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer",
+                BearerFormat = "JWT"
+            });
         });
 
         return services;

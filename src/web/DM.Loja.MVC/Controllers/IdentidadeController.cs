@@ -30,7 +30,8 @@ public class IdentidadeController : MainController
 
         var resposta = await _autenticacaoServico.Registro(usuarioRegistro);
 
-        if (RespostaPossuiErros(resposta.ResultadoResposta)) return View(usuarioRegistro);
+        if (RespostaPossuiErros(resposta.ResultadoResposta)) 
+            return View(usuarioRegistro);
 
         await _autenticacaoServico.RealizarLogin(resposta);
 

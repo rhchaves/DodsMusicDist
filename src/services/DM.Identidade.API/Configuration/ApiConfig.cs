@@ -19,18 +19,18 @@ public static class ApiConfig
 
     public static IApplicationBuilder UseApiConfig(this IApplicationBuilder app, IWebHostEnvironment env)
     {
-        if (env.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
+        if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
         app.UseHttpsRedirection();
+        
         app.UseRouting();
         app.UseAutenticacaoConfig();
+
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
         });
+
         app.UseJwksDiscovery();
 
         return app;

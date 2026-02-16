@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DM.Loja.MVC.Controllers
 {
     [Authorize]
+    [Route("carrinho")]
     public class CarrinhoController : MainController
     {
         private readonly IComprasBffServico _comprasBffServico;
@@ -15,14 +16,14 @@ namespace DM.Loja.MVC.Controllers
             _comprasBffServico = comprasBffServico;
         }
 
-        [Route("carrinho")]
+        [Route("")]
         public async Task<IActionResult> Index()
         {
             return View(await _comprasBffServico.ObterCarrinho());
         }
 
         [HttpPost]
-        [Route("carrinho/adicionar-item")]
+        [Route("adicionar-item")]
         public async Task<IActionResult> AdicionarItemCarrinho(ItemCarrinhoViewModel itemCarrinho)
         {
             var resposta = await _comprasBffServico.AdicionarItemCarrinho(itemCarrinho);
@@ -33,7 +34,7 @@ namespace DM.Loja.MVC.Controllers
         }
 
         [HttpPost]
-        [Route("carrinho/atualizar-item")]
+        [Route("atualizar-item")]
         public async Task<IActionResult> AtualizarItemCarrinho(Guid produtoId, int quantidade)
         {
             var itemCarrinho = new ItemCarrinhoViewModel { ProdutoId = produtoId, Quantidade = quantidade };
@@ -45,7 +46,7 @@ namespace DM.Loja.MVC.Controllers
         }
 
         [HttpPost]
-        [Route("carrinho/remover-item")]
+        [Route("remover-item")]
         public async Task<IActionResult> RemoverItemCarrinho(Guid produtoId)
         {
             var resposta = await _comprasBffServico.RemoverItemCarrinho(produtoId);
@@ -56,7 +57,7 @@ namespace DM.Loja.MVC.Controllers
         }
 
         [HttpPost]
-        [Route("carrinho/aplicar-voucher")]
+        [Route("aplicar-voucher")]
         public async Task<IActionResult> AplicarVoucher(string voucherCodigo)
         {
             var resposta = await _comprasBffServico.AplicarVoucherCarrinho(voucherCodigo);

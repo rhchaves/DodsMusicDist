@@ -78,26 +78,6 @@ public class IdentidadeController : MainController
         return ValidarResposta();
     }
 
-    private async Task<ResponseMessage> RegistrarCliente(UsuarioRegistro usuarioRegistro)
-    {
-        var usuario = await _autenticacaoServico.UserManager.FindByEmailAsync(usuarioRegistro.Email);
-        ArgumentNullException.ThrowIfNull(usuarioRegistro);
-
-        var usuarioRegistrado = new UsuarioRegistradoIntegrationEvent(
-            Guid.Parse(usuario.Id), usuarioRegistro.Nome, usuarioRegistro.Email, usuarioRegistro.Cpf);
-
-        try
-        {
-            var resposta = await _bus.Request<UsuarioRegistradoIntegrationEvent, ResponseMessage>(usuarioRegistrado);
-            return resposta.Message;
-        }
-        catch (Exception)
-        {
-            await _autenticacaoServico.UserManager.DeleteAsync(usuario);
-            throw;
-        }
-    }
-
     [HttpPost("refresh-token")]
     public async Task<ActionResult> RefreshToken([FromBody] string refreshToken)
     {
@@ -117,4 +97,26 @@ public class IdentidadeController : MainController
 
         return ValidarResposta(await _autenticacaoServico.GerarJwt(token.Username));
     }
+
+    #region Métodos Privados
+    private async Task<ResponseMessage> RegistrarCliente(UsuarioRegistro usuarioRegistro)
+    {
+        var usuario = await _autenticacaoServico.UserManager.FindByEmailAsync(usuarioRegistro.Email);
+        ArgumentNullException.ThrowIfNull(usuarioRegistro);
+
+        var usuarioRegistrado = new UsuarioRegistradoIntegrationEvent(
+            Guid.Parse(usuario.Id), usuarioRegistro.Nome, usuarioRegistro.Email, usuarioRegistro.Cpf);
+
+        try
+        {
+            var resposta = await _bus.Request<UsuarioRegistradoIntegrationEvent, ResponseMessage>(usuarioRegistrado);
+            return resposta.Message;
+        }
+        catch (Exception)
+        {
+            await _autenticacaoServico.UserManager.DeleteAsync(usuario);
+            throw;
+        }
+    }
+    #endregion
 }

@@ -1,4 +1,5 @@
 using DM.Pedidos.API.Configuration;
+using DM.WebAPI.Core.Configuration;
 using DM.WebAPI.Core.Identidade;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,5 +26,5 @@ builder.Services.AddMessageBusConfig(builder.Configuration);
 var app = builder.Build();
 
 app.UseSwaggerConfig();
-app.UseApiConfig(app.Environment);
+app.UseApiCoreConfig(app.Environment);
 app.Run();

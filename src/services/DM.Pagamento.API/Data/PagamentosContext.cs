@@ -9,8 +9,7 @@ namespace DM.Pagamentos.API.Data;
 
 public sealed class PagamentosContext : DbContext, IUnitOfWork
 {
-    public PagamentosContext(DbContextOptions<PagamentosContext> options)
-        : base(options)
+    public PagamentosContext(DbContextOptions<PagamentosContext> options) : base(options)
     {
         ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         ChangeTracker.AutoDetectChangesEnabled = false;

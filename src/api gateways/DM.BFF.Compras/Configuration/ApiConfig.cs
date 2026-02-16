@@ -1,11 +1,11 @@
-﻿using DM.WebAPI.Core.Identidade;
-using DM.Bff.Compras.Extensions;
+﻿using DM.Bff.Compras.Extensions;
+using DM.WebAPI.Core.Identidade;
 
 namespace DM.Bff.Compras.Configuration;
 
 public static class ApiConfig
 {
-    public static IServiceCollection AddApiConfig(this IServiceCollection services, IConfiguration configuration)
+    public static void AddApiConfig(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddControllers();
 
@@ -20,26 +20,18 @@ public static class ApiConfig
                         .AllowAnyMethod()
                         .AllowAnyHeader());
         });
-
-        return services;
     }
 
-    public static IApplicationBuilder UseApiConfig(this IApplicationBuilder app, IWebHostEnvironment env)
+    public static void UseApiConfig(this WebApplication app, IWebHostEnvironment env)
     {
-        if (env.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
+        if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
-        app.UseHttpsRedirection();
+        if (app.Configuration["USE_HTTPS_REDIRECTION"] == "true")
+            app.UseHttpsRedirection();
+
         app.UseRouting();
         app.UseCors("Total");
         app.UseAutenticacaoConfig();
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
-
-        return app;
+        app.MapControllers();
     }
 }
