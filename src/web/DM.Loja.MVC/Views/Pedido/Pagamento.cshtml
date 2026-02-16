@@ -1,5 +1,5 @@
 ﻿@using DM.Loja.MVC.Extensions
-@model DM.Loja.MVC.Models.PedidoTransacaoViewModel
+@model PedidoTransacaoViewModel
 
 @{
     ViewData["Title"] = "Confirme o seu pedido";
@@ -79,7 +79,8 @@
                                         <div class="form-group">
                                             <label asp-for="NumeroCartao"></label>
                                             <div class="input-group">
-                                                <input asp-for="NumeroCartao" class="form-control"/>
+                                                <input asp-for="NumeroCartao" class="form-control" autocomplete="cc"
+                                                       id="card_number" placeholder="1234 5678 9012 3456" />
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">
                                                         <i class="fab fa-cc-visa"></i> &nbsp; <i class="fab fa-cc-amex"></i> &nbsp;
@@ -135,7 +136,12 @@
 
 @section Scripts {
 
-@{
-    await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
+    @{
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"
+                integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="~/js/validacaocartaocredito.js" asp-append-version="true"></script>
+        <script src="~/js/pagamento.js" asp-append-version="true"></script>
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

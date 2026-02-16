@@ -16,6 +16,20 @@ public class Voucher : Entidade, IAggregateRoot
     public bool Ativo { get; private set; }
     public bool Utilizado { get; private set; }
 
+    public Voucher(string codigo, decimal? percentual, decimal? valorDesconto, int quantidade, TipoDescontoVoucher tipoDesconto, DateTime dataValidade)
+    {
+        Codigo = codigo;
+        Percentual = percentual;
+        ValorDesconto = valorDesconto;
+        Quantidade = quantidade;
+        TipoDesconto = tipoDesconto;
+        DataValidade = dataValidade;
+
+        DataCriacao = DateTime.Now;
+        Ativo = true;
+        Utilizado = false;
+    }
+
     public bool EstaValidoParaUtilizacao()
     {
         return new VoucherAtivoSpecification()

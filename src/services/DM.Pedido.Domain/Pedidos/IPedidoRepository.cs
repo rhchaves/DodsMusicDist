@@ -9,9 +9,9 @@ public interface IPedidoRepository : IRepository<Pedido>
     Task<IEnumerable<Pedido>> ObterListaPorClienteId(Guid clienteId);
     void Adicionar(Pedido pedido);
     void Atualizar(Pedido pedido);
-
     DbConnection ObterConexao();
-
+    Task<Pedido> ObterUltimoPedido(Guid clienteId);
+    Task<Pedido> ObterUltimoPedidoAutorizado();
 
     /* Pedido Item */
     Task<PedidoItem> ObterItemPorId(Guid id);

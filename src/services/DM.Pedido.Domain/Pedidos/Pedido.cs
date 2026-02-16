@@ -5,8 +5,8 @@ namespace DM.Pedidos.Domain.Pedidos;
 
 public class Pedido : Entidade, IAggregateRoot
 {
-    public Pedido(Guid clienteId, decimal valorTotal, List<PedidoItem> pedidoItems,
-        bool voucherUtilizado = false, decimal desconto = 0, Guid? voucherId = null)
+    public Pedido(Guid clienteId, decimal valorTotal, List<PedidoItem> pedidoItems, bool voucherUtilizado = false, decimal desconto = 0, 
+        Guid? voucherId = null)
     {
         ClienteId = clienteId;
         ValorTotal = valorTotal;
@@ -40,6 +40,16 @@ public class Pedido : Entidade, IAggregateRoot
     public void AutorizarPedido()
     {
         PedidoStatus = PedidoStatus.Autorizado;
+    }
+
+    public void CancelarPedido()
+    {
+        PedidoStatus = PedidoStatus.Cancelado;
+    }
+
+    public void FinalizarPedido()
+    {
+        PedidoStatus = PedidoStatus.Pago;
     }
 
     public void AtribuirVoucher(Voucher voucher)

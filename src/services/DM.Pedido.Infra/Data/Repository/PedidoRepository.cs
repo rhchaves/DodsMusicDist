@@ -1,6 +1,7 @@
 ﻿using DM.Core.Data;
 using DM.Pedidos.Domain.Pedidos;
 using Microsoft.EntityFrameworkCore;
+using Mysqlx.Crud;
 using System.Data.Common;
 
 namespace DM.Pedidos.Infra.Data.Repository;
@@ -57,5 +58,22 @@ public class PedidoRepository : IPedidoRepository
     public void Dispose()
     {
         _context.Dispose();
+    }
+
+    public Task<Pedido> ObterUltimoPedido(Guid customerId)
+    {
+        var fiveMinutesAgo = DateTime.Now.AddMinutes(-5);
+
+        return _context.Pedidos
+            .Include(i => i.PedidoItems)
+            .Where(o => o.ClienteId == customerId && o.DataCadastro > fiveMinutesAgo && o.DataCadastro <= DateTime.Now)
+            .OrderByDescending(o => o.DataCadastro).FirstOrDefaultAsync();
+    }
+
+    public Task<Pedido> ObterUltimoPedidoAutorizado()
+    {
+        return _context.Pedidos.Include(i => i.PedidoItems)
+            .Where(o => o.PedidoStatus == PedidoStatus.Autorizado)
+            .OrderBy(o => o.DataCadastro).FirstOrDefaultAsync();
     }
 }

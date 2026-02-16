@@ -19,7 +19,6 @@ public class PedidosContext : DbContext, IUnitOfWork
         _mediatorHandler = mediatorHandler;
     }
 
-
     public DbSet<Pedido> Pedidos { get; set; }
     public DbSet<PedidoItem> PedidoItems { get; set; }
     public DbSet<Voucher> Vouchers { get; set; }
@@ -32,6 +31,7 @@ public class PedidosContext : DbContext, IUnitOfWork
 
         modelBuilder.Ignore<Event>();
         modelBuilder.Ignore<ValidationResult>();
+        modelBuilder.Entity<Pedido>().Property(p => p.Codigo).HasIdentityOptions(1000);
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(PedidosContext).Assembly);
 
@@ -48,15 +48,9 @@ public class PedidosContext : DbContext, IUnitOfWork
         foreach (var entry in ChangeTracker.Entries()
             .Where(entry => entry.Entity.GetType().GetProperty("DataCadastro") != null))
         {
-            if (entry.State == EntityState.Added)
-            {
-                entry.Property("DataCadastro").CurrentValue = DateTime.Now;
-            }
+            if (entry.State == EntityState.Added) entry.Property("DataCadastro").CurrentValue = DateTime.Now;
 
-            if (entry.State == EntityState.Modified)
-            {
-                entry.Property("DataCadastro").IsModified = false;
-            }
+            if (entry.State == EntityState.Modified) entry.Property("DataCadastro").IsModified = false;
         }
 
         var sucesso = await base.SaveChangesAsync() > 0;

@@ -8,6 +8,7 @@ public interface IPedidoQueries
 {
     Task<PedidoDTO> ObterUltimoPedido(Guid clienteId);
     Task<IEnumerable<PedidoDTO>> ObterListaPorClienteId(Guid clienteId);
+    Task<PedidoDTO> ObterPedidoAutorizado();
 }
 
 public class PedidoQueries : IPedidoQueries
@@ -43,6 +44,13 @@ public class PedidoQueries : IPedidoQueries
         var pedidos = await _pedidoRepository.ObterListaPorClienteId(clienteId);
 
         return pedidos.Select(PedidoDTO.ParaPedidoDTO);
+    }
+
+    public async Task<PedidoDTO> ObterPedidoAutorizado()
+    {
+        var pedidos = await _pedidoRepository.ObterUltimoPedidoAutorizado();
+
+        return MapearPedido(pedidos);
     }
 
     private PedidoDTO MapearPedido(dynamic result)
