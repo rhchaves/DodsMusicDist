@@ -67,16 +67,13 @@
                         <partial name="_Endereco" model="Model"/>
                     </div>
                     <div class="card-body border-top">
+                        <a asp-controller="Carrinho" asp-action="Index" class="btn btn-light"> <i class="fa fa-chevron-left"></i> Voltar ao carrinho </a>
                         @{
                             if (Model.Endereco != null)
                             {
-                                <div class="text-left">
-                                    <a asp-controller="Pedido" asp-action="Pagamento" class="btn btn-primary float-md-right"> Pagamento <i class="fa fa-chevron-right"></i> </a>
-                                </div>
+                                <a asp-controller="Pedido" asp-action="Pagamento" class="btn btn-primary float-md-right"> Pagamento <i class="fa fa-chevron-right"></i> </a>
                             }
                         }
-
-                        <a asp-controller="Carrinho" asp-action="Index" class="btn btn-light"> <i class="fa fa-chevron-left"></i> Voltar ao carrinho </a>
                     </div>
                 </div>
             }

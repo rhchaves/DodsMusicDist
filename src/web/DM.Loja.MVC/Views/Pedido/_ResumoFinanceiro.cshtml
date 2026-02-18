@@ -3,9 +3,8 @@
 
 <article class="card-body border-top">
     <dl class="row">
-        @{
-            if (Model.VoucherUtilizado)
-            {
+        @if (Model.VoucherUtilizado)
+        {
             <dt class="col-sm-10">Subtotal: <span class="float-right text-muted">@Model.Itens.Sum(i => i.Quantidade) itens</span></dt>
             <dd class="col-sm-2 text-right">
                 <strong>@this.FormatoMoeda(Model.ValorTotal + Model.Desconto)</strong>
@@ -15,7 +14,6 @@
             <dd class="col-sm-2 text-danger text-right">
                 <strong>@this.FormatoMoeda(Model.Desconto)</strong>
             </dd>
-            }
         }
         <dt class="col-sm-10">Total:</dt>
         <dd class="col-sm-2 text-right">

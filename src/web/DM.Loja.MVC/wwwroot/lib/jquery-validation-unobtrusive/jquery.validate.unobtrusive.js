@@ -1,10 +1,7 @@
-/**
- * @license
- * Unobtrusive validation support library for jQuery and jQuery Validate
- * Copyright (c) .NET Foundation. All rights reserved.
- * Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
- * @version v4.0.0
- */
+// Unobtrusive validation support library for jQuery and jQuery Validate
+// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for License information.
+// @version v3.2.11
 
 /*jslint white: true, browser: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: false */
 /*global document: false, jQuery: false */
@@ -63,8 +60,7 @@
         if (replace) {
             container.empty();
             error.removeClass("input-validation-error").appendTo(container);
-        }
-        else {
+        } else {
             error.hide();
         }
     }
@@ -311,11 +307,9 @@
 
             if (min && max) {
                 setValidationValues(options, minMaxRuleName, [min, max]);
-            }
-            else if (min) {
+            } else if (min) {
                 setValidationValues(options, minRuleName, min);
-            }
-            else if (max) {
+            } else if (max) {
                 setValidationValues(options, maxRuleName, max);
             }
         });
@@ -402,8 +396,7 @@
                 // For checkboxes and radio buttons, only pick up values from checked fields.
                 if (field.is(":checkbox")) {
                     return field.filter(":checked").val() || field.filter(":hidden").val() || '';
-                }
-                else if (field.is(":radio")) {
+                } else if (field.is(":radio")) {
                     return field.filter(":checked").val() || '';
                 }
                 return field.val();

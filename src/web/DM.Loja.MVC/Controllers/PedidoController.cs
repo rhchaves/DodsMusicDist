@@ -65,7 +65,7 @@ public class PedidoController : MainController
     [Route("pedido-concluido")]
     public async Task<IActionResult> PedidoConcluido()
     {
-        return View("ConfirmacaoPedido", await _comprasBffServico.ObterUltimoPedido());
+        return View("PedidoConfirmado", await _comprasBffServico.ObterUltimoPedido());
     }
 
     [HttpGet("meus-pedidos")]

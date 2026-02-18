@@ -4,6 +4,129 @@
 @{
     ViewData["Title"] = "Confirme o seu pedido";
 }
+<style>
+
+    form #card_number {
+        background-image: url(/images/misc/cc.png), url(/images/misc/cc.png);
+        background-position: 4px -107px, 225px -53px;
+        background-size: 120px 361px, 120px 361px;
+        background-repeat: no-repeat;
+        padding-left: 54px;
+        width: 255px
+    }
+
+        form #card_number.visa {
+            background-position: 2px -147px, 225px -53px
+        }
+
+        form #card_number.visa_electron {
+            background-position: 2px -185px, 225px -53px
+        }
+
+        form #card_number.mastercard {
+            background-position: 2px -224px, 225px -53px
+        }
+
+        form #card_number.maestro {
+            background-position: 2px -263px, 225px -53px
+        }
+
+        form #card_number.discover {
+            background-position: 2px -302px, 225px -53px
+        }
+
+        form #card_number.valid.visa {
+            background-position: 2px -147px, 225px -78px
+        }
+
+        form #card_number.valid.visa_electron {
+            background-position: 2px -185px, 225px -78px
+        }
+
+        form #card_number.valid.mastercard {
+            background-position: 2px -224px, 225px -78px
+        }
+
+        form #card_number.valid.maestro {
+            background-position: 2px -263px, 225px -78px
+        }
+
+        form #card_number.valid.discover {
+            background-position: 2px -302px, 225px -78px
+        }
+
+        form #card_number.invalid {
+            background-position: 4px -107px, 225px -53px;
+        }
+
+            form #card_number.invalid.visa {
+                background-position: 2px -147px, 225px -338px
+            }
+
+            form #card_number.invalid.visa_electron {
+                background-position: 2px -185px, 225px -338px
+            }
+
+            form #card_number.invalid.mastercard {
+                background-position: 2px -224px, 225px -338px
+            }
+
+            form #card_number.invalid.maestro {
+                background-position: 2px -263px, 225px -338px
+            }
+
+            form #card_number.invalid.discover {
+                background-position: 2px -302px, 225px -338px
+            }
+
+    .border-top {
+        border-top: 1px solid #e5e5e5;
+    }
+
+    .border-bottom {
+        border-bottom: 1px solid #e5e5e5;
+    }
+
+    .border-top-gray {
+        border-top-color: #adb5bd;
+    }
+
+    .box-shadow {
+        box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+    }
+
+    .lh-condensed {
+        line-height: 1.25;
+    }
+
+    .input-group-append {
+        margin-left: -1px
+    }
+
+    .custom-control-input.is-valid ~ .custom-control-label, .was-validated .custom-control-input:valid ~ .custom-control-label {
+        color: #28a745
+    }
+
+        .custom-control-input.is-valid ~ .custom-control-label::before, .was-validated .custom-control-input:valid ~ .custom-control-label::before {
+            background-color: #71dd8a
+        }
+
+    .custom-control-input.is-valid ~ .valid-feedback, .custom-control-input.is-valid ~ .valid-tooltip, .was-validated .custom-control-input:valid ~ .valid-feedback, .was-validated .custom-control-input:valid ~ .valid-tooltip {
+        display: block
+    }
+
+    .custom-control-input.is-valid:checked ~ .custom-control-label::before, .was-validated .custom-control-input:valid:checked ~ .custom-control-label::before {
+        background-color: #34ce57
+    }
+
+    .custom-control-input.is-valid:focus ~ .custom-control-label::before, .was-validated .custom-control-input:valid:focus ~ .custom-control-label::before {
+        box-shadow: 0 0 0 1px #fff, 0 0 0 .2rem rgba(40, 167, 69, .25)
+    }
+
+    .custom-file-input.is-valid ~ .custom-file-label, .was-validated .custom-file-input:valid ~ .custom-file-label {
+        border-color: #28a745
+    }
+</style>
 
 <section class="padding-y">
     <div class="container">
@@ -80,7 +203,7 @@
                                             <label asp-for="NumeroCartao"></label>
                                             <div class="input-group">
                                                 <input asp-for="NumeroCartao" class="form-control" autocomplete="cc"
-                                                       id="card_number" placeholder="1234 5678 9012 3456" />
+                                                       id="card_number" placeholder="1111 2222 3333 4444" />
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">
                                                         <i class="fab fa-cc-visa"></i> &nbsp; <i class="fab fa-cc-amex"></i> &nbsp;
@@ -121,11 +244,8 @@
                         </article>
 
                         <div class="card-body border-top">
-                            <div class="text-left">
-                                <button type="submit" class="btn btn-primary float-md-right"> Finalizar Pedido <i class="fa fa-chevron-right"></i> </button>
-                            </div>
-
                             <a asp-controller="Pedido" asp-action="EnderecoEntrega" class="btn btn-light"> <i class="fa fa-chevron-left"></i> Voltar ao Endereço </a>
+                            <button type="submit" class="btn btn-primary float-md-right"> Finalizar Pedido <i class="fa fa-chevron-right"></i> </button>
                         </div>
                     </form>
                 </div>
