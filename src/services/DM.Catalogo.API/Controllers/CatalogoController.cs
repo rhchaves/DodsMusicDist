@@ -1,0 +1,38 @@
+﻿using DM.Catalogo.API.Models;
+using DM.WebAPI.Core.Controllers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace DM.Catalogo.API.Controllers;
+
+[ApiController]
+[Authorize]
+[Route("catalogo/produtos")]
+public class CatalogoController : MainController
+{
+    private readonly IProdutoRepository _produtoRepository;
+
+    public CatalogoController(IProdutoRepository produtoRepository)
+    {
+        _produtoRepository = produtoRepository;
+    }
+
+    [AllowAnonymous]
+    [HttpGet("")]
+    public async Task<PagedResult<Produto>> Index([FromQuery] int ps = 8, [FromQuery] int page = 1, [FromQuery] string q = null)
+    {
+        return await _produtoRepository.ObterTodos(ps, page, q);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<Produto> ProdutoDetalhe(Guid id)
+    {
+        return await _produtoRepository.ObterPorId(id);
+    }
+
+    [HttpGet("lista/{ids}")]
+    public async Task<IEnumerable<Produto>> ObterProdutosPorId(string ids)
+    {
+        return await _produtoRepository.ObterProdutosPorId(ids);
+    }
+}

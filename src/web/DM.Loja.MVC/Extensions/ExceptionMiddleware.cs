@@ -1,0 +1,70 @@
+﻿using DM.Loja.MVC.Services;
+using Polly.CircuitBreaker;
+//using Refit;
+using System.Net;
+
+namespace DM.Loja.MVC.Extensions;
+
+public class ExceptionMiddleware
+{
+    private readonly RequestDelegate _next;
+    private static IAutenticacaoServico _autenticacaoServico;
+
+    public ExceptionMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
+
+    // Não pode ser injetado serviço no construtor, principalmente por ser Scoped
+    public async Task InvokeAsync(HttpContext httpContext, IAutenticacaoServico autenticacaoServico)
+    {
+        _autenticacaoServico = autenticacaoServico;
+
+        try
+        {
+            await _next(httpContext);
+        }
+        catch (CustomHttpRequestException ex)
+        {
+            HandleRequestExceptionAsync(httpContext, ex.StatusCode);
+        }
+        //catch (ValidationApiException ex)
+        //{
+        //    HandleRequestExceptionAsync(httpContext, ex.StatusCode);
+        //}
+        //catch (ApiException ex)
+        //{
+        //    HandleRequestExceptionAsync(httpContext, ex.StatusCode);
+        //}
+        catch (BrokenCircuitException)
+        {
+            HandleCircuitBreakerExceptionAsync(httpContext);
+        }
+    }
+
+    private static void HandleRequestExceptionAsync(HttpContext context, HttpStatusCode statusCode)
+    {
+        if (statusCode == HttpStatusCode.Unauthorized)
+        {
+            if (_autenticacaoServico.TokenExpirado())
+            {
+                if (_autenticacaoServico.RefreshTokenValido().Result)
+                {
+                    context.Response.Redirect(context.Request.Path);
+                    return;
+                }
+            }
+
+            _autenticacaoServico.Logout();
+            context.Response.Redirect($"/login?ReturnUrl={context.Request.Path}");
+            return;
+        }
+
+        context.Response.StatusCode = (int)statusCode;
+    }
+
+    private static void HandleCircuitBreakerExceptionAsync(HttpContext context)
+    {
+        context.Response.Redirect("/sistema-indisponivel");
+    }
+}

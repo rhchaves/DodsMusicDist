@@ -1,9 +1,8 @@
-namespace DM.Loja.MVC.Models
-{
-    public class ErrorViewModel
-    {
-        public string? RequestId { get; set; }
+namespace DM.Loja.MVC.Models;
 
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
-    }
+public class ErrorViewModel
+{
+    public int CodigoErro { get; set; }
+    public string Titulo { get; set; }
+    public string Mensagem { get; set; }
 }

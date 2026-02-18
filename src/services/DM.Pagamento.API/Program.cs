@@ -1,25 +1,17 @@
+using DM.Pagamentos.API.Configuration;
+using DM.WebAPI.Core.Configuration;
+using DM.WebAPI.Core.Identidade;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddApiConfig(builder.Configuration);
+builder.Services.AddJwtConfig(builder.Configuration);
+builder.Services.AddSwaggerConfig();
+builder.Services.RegistrarServicos();
+builder.Services.AddMessageBusConfig(builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
+app.UseSwaggerConfig();
+app.UseApiCoreConfig(app.Environment);
 app.Run();

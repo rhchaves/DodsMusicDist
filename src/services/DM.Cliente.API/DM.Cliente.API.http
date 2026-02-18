@@ -1,6 +1,0 @@
-@DM.Cliente.API_HostAddress = http://localhost:5047
-
-GET {{DM.Cliente.API_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
