@@ -42,8 +42,8 @@ public class ClienteCommandHandler : CommandHandler,
     {
         if (!message.EhValido()) return message.ValidationResult;
 
-        var endereco = new Endereco(message.Logradouro, message.Numero, message.Complemento, message.Bairro, 
-            message.Cep, message.Cidade, message.Estado, (Guid)message.ClienteId);
+        var endereco = new Endereco(message.Logradouro, message.Numero, message.Bairro, 
+            message.Cep, message.Cidade, message.Estado, (Guid)message.ClienteId, message.Complemento);
         _clienteRepository.AdicionarEndereco(endereco);
 
         return await PersistirDados(_clienteRepository.UnitOfWork);

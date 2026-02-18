@@ -5,21 +5,15 @@ namespace DM.Loja.MVC.Models;
 
 public class EnderecoViewModel
 {
-    [Required]
-    public string Logradouro { get; set; }
-    [Required]
+    public required string Logradouro { get; set; }
     [DisplayName("Número")]
-    public string Numero { get; set; }
-    public string Complemento { get; set; }
-    [Required]
-    public string Bairro { get; set; }
-    [Required]
+    public required string Numero { get; set; }
+    public string? Complemento { get; set; }
+    public required string Bairro { get; set; }
     [DisplayName("CEP")]
-    public string Cep { get; set; }
-    [Required]
-    public string Cidade { get; set; }
-    [Required]
-    public string Estado { get; set; }
+    public required string Cep { get; set; }
+    public required string Cidade { get; set; }
+    public required string Estado { get; set; }
 
     public override string ToString()
     {

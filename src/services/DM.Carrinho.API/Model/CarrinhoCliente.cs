@@ -14,7 +14,7 @@ namespace DM.Carrinho.API.Model
         public ValidationResult ValidationResult { get; set; }
 
         public bool VoucherUtilizado { get; set; }
-        public decimal? Desconto { get; set; }
+        public decimal Desconto { get; set; }
 
         public Voucher? Voucher { get; set; }
 

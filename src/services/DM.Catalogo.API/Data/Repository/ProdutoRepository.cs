@@ -16,7 +16,7 @@ public class ProdutoRepository : IProdutoRepository
 
     public IUnitOfWork UnitOfWork => _context;
 
-    public async Task<PagedResult<Produto>> ObterTodos(int pageSize, int pageIndex, string query = null)
+    public async Task<PagedResult<Produto>> ObterTodos(int pageSize, int pageIndex, string? query = null)
     {
         var sql = @$"SELECT * FROM Produtos 
                       WHERE (@Nome IS NULL OR Nome LIKE '%' + @Nome + '%') 
@@ -38,13 +38,13 @@ public class ProdutoRepository : IProdutoRepository
             TotalResults = total,
             PageIndex = pageIndex,
             PageSize = pageSize,
-            Query = query
+            Query = query ?? ""
         };
     }
 
     public async Task<Produto> ObterPorId(Guid id)
     {
-        return await _context.Produtos.FindAsync(id);
+        return await _context.Produtos.FindAsync(id) ?? new Produto();
     }
 
     public async Task<List<Produto>> ObterProdutosPorId(string ids)

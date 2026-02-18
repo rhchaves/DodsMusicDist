@@ -8,7 +8,7 @@ public class AdicionarEnderecoCommand : Command
     public Guid? ClienteId { get; set; }
     public string Logradouro { get; set; }
     public string Numero { get; set; }
-    public string Complemento { get; set; }
+    public string? Complemento { get; set; }
     public string Bairro { get; set; }
     public string Cep { get; set; }
     public string Cidade { get; set; }
@@ -18,14 +18,14 @@ public class AdicionarEnderecoCommand : Command
     {
     }
 
-    public AdicionarEnderecoCommand(Guid clienteId, string logradouro, string numero, string complemento, string bairro, string cep, 
-        string cidade, string estado)
+    public AdicionarEnderecoCommand(Guid clienteId, string logradouro, string numero, string bairro, string cep, 
+        string cidade, string estado, string complemento = null)
     {
         AggregateId = clienteId;
         ClienteId = clienteId;
         Logradouro = logradouro;
         Numero = numero;
-        Complemento = complemento;
+        Complemento = complemento ?? "";
         Bairro = bairro;
         Cep = cep;
         Cidade = cidade;
