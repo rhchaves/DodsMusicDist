@@ -17,8 +17,9 @@ public class CarrinhoIntegrationHandler : IConsumer<PedidoRealizadoIntegrationEv
     public async Task Consume(ConsumeContext<PedidoRealizadoIntegrationEvent> context)
     {
         await RemoveShoppingCart(context.Message);
-        await context.RespondAsync(new object());
+        await context.RespondAsync(new PedidoRealizadoResponse());
     }
+
 
     private async Task RemoveShoppingCart(PedidoRealizadoIntegrationEvent message)
     {
@@ -34,3 +35,4 @@ public class CarrinhoIntegrationHandler : IConsumer<PedidoRealizadoIntegrationEv
         }
     }
 }
+public record PedidoRealizadoResponse;

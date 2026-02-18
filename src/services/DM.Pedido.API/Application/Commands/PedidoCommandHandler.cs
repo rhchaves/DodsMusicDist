@@ -21,6 +21,7 @@ public class PedidoCommandHandler : CommandHandler, IRequestHandler<AdicionarPed
     {
         _voucherRepository = voucherRepository;
         _pedidoRepository = pedidoRepository;
+        _bus = bus;
     }
 
     public async Task<ValidationResult> Handle(AdicionarPedidoCommand message, CancellationToken cancellationToken)

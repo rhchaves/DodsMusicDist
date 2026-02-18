@@ -24,7 +24,7 @@ public class CarrinhoController : MainController
     [HttpGet("carrinho")]
     public async Task<CarrinhoCliente> ObterCarrinho()
     {
-        return await ObterCarrinhoCliente() ?? new CarrinhoCliente();
+        return await ObterCarrinhoCliente() ?? new CarrinhoCliente(_user.ObterUsuarioId());
     }
 
     [HttpPost("carrinho")]

@@ -34,8 +34,7 @@ public class PedidoMapping : IEntityTypeConfiguration<Pedido>
                 .HasColumnName("Estado");
         });
 
-        builder.Property(c => c.Codigo)
-            .HasDefaultValueSql("NEXT VALUE FOR MinhaSequencia");
+        builder.Property(c => c.Codigo).UseIdentityColumn(100000);
 
         // 1 : N => Pedido : PedidoItems
         builder.HasMany(c => c.PedidoItems)
