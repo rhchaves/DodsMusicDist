@@ -1,7 +1,6 @@
 ﻿using DM.Core.Data;
 using DM.Pedidos.Domain.Pedidos;
 using Microsoft.EntityFrameworkCore;
-using Mysqlx.Crud;
 using System.Data.Common;
 
 namespace DM.Pedidos.Infra.Data.Repository;

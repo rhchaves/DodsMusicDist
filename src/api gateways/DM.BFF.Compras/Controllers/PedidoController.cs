@@ -8,6 +8,7 @@ using System.Globalization;
 namespace DM.Bff.Compras.Controllers
 {
     [Authorize]
+    [Route("compras/pedido")]
     public class PedidoController : MainController
     {
         private readonly ICatalogoServico _catalogoServico;
@@ -24,8 +25,7 @@ namespace DM.Bff.Compras.Controllers
             _clienteServico = clienteServico;
         }
 
-        [HttpPost]
-        [Route("compras/pedido")]
+        [HttpPost("")]
         public async Task<IActionResult> AdicionarPedido(PedidoDTO pedido)
         {
             var carrinho = await _carrinhoServico.ObterCarrinho();
@@ -39,7 +39,7 @@ namespace DM.Bff.Compras.Controllers
             return ValidarResposta(await _pedidoServico.FinalizarPedido(pedido));
         }
 
-        [HttpGet("compras/pedido/ultimo")]
+        [HttpGet("ultimo")]
         public async Task<IActionResult> UltimoPedido()
         {
             var pedido = await _pedidoServico.ObterUltimoPedido();
@@ -52,7 +52,7 @@ namespace DM.Bff.Compras.Controllers
             return ValidarResposta(pedido);
         }
 
-        [HttpGet("compras/pedido/lista-cliente")]
+        [HttpGet("lista-cliente")]
         public async Task<IActionResult> ListaPorCliente()
         {
             var pedidos = await _pedidoServico.ObterListaPorClienteId();

@@ -7,6 +7,7 @@ namespace DM.Catalogo.API.Controllers;
 
 [ApiController]
 [Authorize]
+[Route("catalogo/produtos")]
 public class CatalogoController : MainController
 {
     private readonly IProdutoRepository _produtoRepository;
@@ -17,19 +18,19 @@ public class CatalogoController : MainController
     }
 
     [AllowAnonymous]
-    [HttpGet("catalogo/produtos")]
+    [HttpGet("")]
     public async Task<PagedResult<Produto>> Index([FromQuery] int ps = 8, [FromQuery] int page = 1, [FromQuery] string q = null)
     {
         return await _produtoRepository.ObterTodos(ps, page, q);
     }
 
-    [HttpGet("catalogo/produtos/{id}")]
+    [HttpGet("{id}")]
     public async Task<Produto> ProdutoDetalhe(Guid id)
     {
         return await _produtoRepository.ObterPorId(id);
     }
 
-    [HttpGet("catalogo/produtos/lista/{ids}")]
+    [HttpGet("lista/{ids}")]
     public async Task<IEnumerable<Produto>> ObterProdutosPorId(string ids)
     {
         return await _produtoRepository.ObterProdutosPorId(ids);

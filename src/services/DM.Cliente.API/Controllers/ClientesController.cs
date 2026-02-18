@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DM.Clientes.API.Controllers;
 
-[Route("cliente")]
+[Route("cliente/endereco")]
 public class ClientesController : MainController
 {
     private readonly IClienteRepository _clienteRepository;
@@ -21,7 +21,7 @@ public class ClientesController : MainController
         _user = user;
     }
 
-    [HttpGet("endereco")]
+    [HttpGet("")]
     public async Task<IActionResult> ObterEndereco()
     {
         var endereco = await _clienteRepository.ObterEnderecoPorId(_user.ObterUsuarioId());
@@ -29,7 +29,7 @@ public class ClientesController : MainController
         return endereco == null ? NotFound() : ValidarResposta(endereco);
     }
 
-    [HttpPost("endereco")]
+    [HttpPost("")]
     public async Task<IActionResult> AdicionarEndereco(AdicionarEnderecoCommand endereco)
     {
         endereco.ClienteId = _user.ObterUsuarioId();

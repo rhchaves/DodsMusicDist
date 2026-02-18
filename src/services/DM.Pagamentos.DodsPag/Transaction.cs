@@ -1,15 +1,18 @@
-﻿namespace DM.Pagamentos.DodsPag;
+﻿using Bogus;
+using NetDevPack.Utilities;
+
+namespace DM.Pagamentos.DodsPag;
 
 public class Transaction
 {
+    private readonly DodsPagService _dodsPagService;
+
     public Transaction(DodsPagService dodsPagService)
     {
-        DodsPagService = dodsPagService;
+        _dodsPagService = dodsPagService;
     }
 
     protected Transaction() { }
-
-    private readonly DodsPagService DodsPagService;
 
     protected string Endpoint { get; set; }
 
@@ -91,21 +94,25 @@ public class Transaction
 
     public Task<Transaction> AuthorizeCardTransaction()
     {
-        var success = new Random().Next(2) == 0;
+        var faker = new Faker();
+        var success = faker.Random.Bool(0.7f);
         Transaction transaction;
+
+        // Comentar a linha abaixo para ter a recusa aleatória do pagamento.
+        success = true;
 
         if (success)
         {
             transaction = new Transaction
             {
-                AuthorizationCode = GetGenericCode(),
+                AuthorizationCode = StringUtils.RandomString(),
                 CardBrand = "MasterCard",
                 TransactionDate = DateTime.Now,
                 Cost = Amount * (decimal)0.03,
                 Amount = Amount,
                 Status = TransactionStatus.Authorized,
-                Tid = GetGenericCode(),
-                Nsu = GetGenericCode()
+                Tid = StringUtils.RandomString(),
+                Nsu = StringUtils.RandomString()
             };
 
             return Task.FromResult(transaction);
@@ -130,7 +137,7 @@ public class Transaction
     {
         var transaction = new Transaction
         {
-            AuthorizationCode = GetGenericCode(),
+            AuthorizationCode = StringUtils.RandomString(),
             CardBrand = CardBrand,
             TransactionDate = DateTime.Now,
             Cost = 0,
@@ -158,11 +165,5 @@ public class Transaction
         };
 
         return Task.FromResult(transaction);
-    }
-
-    private string GetGenericCode()
-    {
-        return new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 10)
-            .Select(s => s[new Random().Next(s.Length)]).ToArray());
     }
 }

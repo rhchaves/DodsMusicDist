@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DM.Carrinho.API.Controllers;
 
 [Authorize]
+[Route("carrinho")]
 public class CarrinhoController : MainController
 {
     private readonly ICollection<string> _erros = new List<string>();
@@ -21,13 +22,13 @@ public class CarrinhoController : MainController
         _context = context;
     }
 
-    [HttpGet("carrinho")]
+    [HttpGet("")]
     public async Task<CarrinhoCliente> ObterCarrinho()
     {
         return await ObterCarrinhoCliente() ?? new CarrinhoCliente(_user.ObterUsuarioId());
     }
 
-    [HttpPost("carrinho")]
+    [HttpPost("")]
     public async Task<IActionResult> AdicionarItemCarrinho(CarrinhoItem item)
     {
         var carrinho = await ObterCarrinhoCliente();
@@ -43,7 +44,7 @@ public class CarrinhoController : MainController
         return ValidarResposta();
     }
 
-    [HttpPut("carrinho/{produtoId}")]
+    [HttpPut("{produtoId}")]
     public async Task<IActionResult> AtualizarItemCarrinho(Guid produtoId, CarrinhoItem item)
     {
         var carrinho = await ObterCarrinhoCliente();
@@ -62,7 +63,7 @@ public class CarrinhoController : MainController
         return ValidarResposta();
     }
 
-    [HttpDelete("carrinho/{produtoId}")]
+    [HttpDelete("{produtoId}")]
     public async Task<IActionResult> RemoverItemCarrinho(Guid produtoId)
     {
         var carrinho = await ObterCarrinhoCliente();
@@ -83,7 +84,7 @@ public class CarrinhoController : MainController
     }
 
     [HttpPost]
-    [Route("carrinho/aplicar-voucher")]
+    [Route("aplicar-voucher")]
     public async Task<IActionResult> AplicarVoucher(Voucher voucher)
     {
         var carrinho = await ObterCarrinhoCliente();

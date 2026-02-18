@@ -15,10 +15,9 @@ public class PagamentoCartaoCreditoFacade : IPagamentoFacade
 
     public async Task<Transacao> AutorizarPagamento(Pagamento pagamento)
     {
-        var nerdsPagSvc = new DodsPagService(_pagamentoConfig.DefaultApiKey,
-            _pagamentoConfig.DefaultEncryptionKey);
+        var dodsPagSvc = new DodsPagService(_pagamentoConfig.DefaultApiKey, _pagamentoConfig.DefaultEncryptionKey);
 
-        var cardHashGen = new CardHash(nerdsPagSvc)
+        var cardHashGen = new CardHash(dodsPagSvc)
         {
             CardNumber = pagamento.CartaoCredito.NumeroCartao,
             CardHolderName = pagamento.CartaoCredito.NomeCartao,
@@ -27,7 +26,7 @@ public class PagamentoCartaoCreditoFacade : IPagamentoFacade
         };
         var cardHash = cardHashGen.Generate();
 
-        var transacao = new Transaction(nerdsPagSvc)
+        var transacao = new Transaction(dodsPagSvc)
         {
             CardHash = cardHash,
             CardNumber = pagamento.CartaoCredito.NumeroCartao,
@@ -43,20 +42,20 @@ public class PagamentoCartaoCreditoFacade : IPagamentoFacade
 
     public async Task<Transacao> CapturarPagamento(Transacao transacao)
     {
-        var nerdsPagSvc = new DodsPagService(_pagamentoConfig.DefaultApiKey,
+        var dodsPagSvc = new DodsPagService(_pagamentoConfig.DefaultApiKey,
             _pagamentoConfig.DefaultEncryptionKey);
 
-        var transaction = ParaTransaction(transacao, nerdsPagSvc);
+        var transaction = ParaTransaction(transacao, dodsPagSvc);
 
         return ParaTransacao(await transaction.CaptureCardTransaction());
     }
 
     public async Task<Transacao> CancelarAutorizacao(Transacao transacao)
     {
-        var nerdsPagSvc = new DodsPagService(_pagamentoConfig.DefaultApiKey,
+        var dodsPagSvc = new DodsPagService(_pagamentoConfig.DefaultApiKey,
             _pagamentoConfig.DefaultEncryptionKey);
 
-        var transaction = ParaTransaction(transacao, nerdsPagSvc);
+        var transaction = ParaTransaction(transacao, dodsPagSvc);
 
         return ParaTransacao(await transaction.CancelAuthorization());
     }

@@ -27,14 +27,12 @@ public class PagamentoRepository : IPagamentoRepository
 
     public async Task<Pagamento> ObterPagamentoPorPedidoId(Guid pedidoId)
     {
-        return await _context.Pagamentos.AsNoTracking()
-            .FirstOrDefaultAsync(p => p.PedidoId == pedidoId);
+        return await _context.Pagamentos.AsNoTracking().FirstOrDefaultAsync(p => p.PedidoId == pedidoId);
     }
 
     public async Task<IEnumerable<Transacao>> ObterTransacaoesPorPedidoId(Guid pedidoId)
     {
-        return await _context.Transacoes.AsNoTracking()
-            .Where(t => t.Pagamento.PedidoId == pedidoId).ToListAsync();
+        return await _context.Transacoes.AsNoTracking().Where(t => t.Pagamento.PedidoId == pedidoId).ToListAsync();
     }
 
     public void Dispose()

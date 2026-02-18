@@ -13,8 +13,7 @@ public class PedidosContext : DbContext, IUnitOfWork
 {
     private readonly IMediatorHandler _mediatorHandler;
 
-    public PedidosContext(DbContextOptions<PedidosContext> options, IMediatorHandler mediatorHandler)
-        : base(options)
+    public PedidosContext(DbContextOptions<PedidosContext> options, IMediatorHandler mediatorHandler) : base(options)
     {
         _mediatorHandler = mediatorHandler;
     }
@@ -45,8 +44,7 @@ public class PedidosContext : DbContext, IUnitOfWork
 
     public async Task<bool> Commit()
     {
-        foreach (var entry in ChangeTracker.Entries()
-            .Where(entry => entry.Entity.GetType().GetProperty("DataCadastro") != null))
+        foreach (var entry in ChangeTracker.Entries().Where(entry => entry.Entity.GetType().GetProperty("DataCadastro") != null))
         {
             if (entry.State == EntityState.Added) entry.Property("DataCadastro").CurrentValue = DateTime.Now;
 
@@ -64,22 +62,11 @@ public static class MediatorExtension
 {
     public static async Task PublicarEventos<T>(this IMediatorHandler mediator, T ctx) where T : DbContext
     {
-        var domainEntities = ctx.ChangeTracker
-            .Entries<Entidade>()
-            .Where(x => x.Entity.Notificacoes != null && x.Entity.Notificacoes.Any());
+        var domainEntities = ctx.ChangeTracker.Entries<Entidade>().Where(x => x.Entity.Notificacoes != null && x.Entity.Notificacoes.Any());
+        var domainEvents = domainEntities.SelectMany(x => x.Entity.Notificacoes).ToList();
 
-        var domainEvents = domainEntities
-            .SelectMany(x => x.Entity.Notificacoes)
-            .ToList();
-
-        domainEntities.ToList()
-            .ForEach(entity => entity.Entity.LimparEventos());
-
-        var tasks = domainEvents
-            .Select(async (domainEvent) =>
-            {
-                await mediator.PublicarEvento(domainEvent);
-            });
+        domainEntities.ToList().ForEach(entity => entity.Entity.LimparEventos());
+        var tasks = domainEvents.Select(async domainEvent => { await mediator.PublicarEvento(domainEvent); });
 
         await Task.WhenAll(tasks);
     }
