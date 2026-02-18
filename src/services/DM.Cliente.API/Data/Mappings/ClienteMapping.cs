@@ -32,7 +32,7 @@ public class ClienteMapping : IEntityTypeConfiguration<Cliente>
                 .HasColumnType($"varchar({Email.EnderecoMaxLength})");
         });
 
-        // 1 : 1 => Aluno : Endereco
+        // 1 : 1 => Cliente : Endereco
         builder.HasOne(c => c.Endereco)
             .WithOne(c => c.Cliente);
 

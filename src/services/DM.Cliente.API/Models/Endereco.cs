@@ -25,6 +25,7 @@ public class Endereco : Entidade
         Cep = cep;
         Cidade = cidade;
         Estado = estado;
+        ClienteId = clienteId;
     }
 
     // EF Constructor

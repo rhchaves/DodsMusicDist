@@ -5,7 +5,7 @@ namespace DM.Clientes.API.Application.Commands;
 
 public class AdicionarEnderecoCommand : Command
 {
-    public Guid ClienteId { get; set; }
+    public Guid? ClienteId { get; set; }
     public string Logradouro { get; set; }
     public string Numero { get; set; }
     public string Complemento { get; set; }

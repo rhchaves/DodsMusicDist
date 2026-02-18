@@ -1,26 +1,27 @@
 ﻿using DM.Clientes.API.Application.Commands;
 using DM.Clientes.API.Models;
-using DM.Core.Mediator;
-using DM.WebAPI.Core.Usuario;
 using DM.WebAPI.Core.Controllers;
+using DM.WebAPI.Core.Usuario;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DM.Clientes.API.Controllers;
 
+[Route("cliente")]
 public class ClientesController : MainController
 {
     private readonly IClienteRepository _clienteRepository;
-    private readonly IMediatorHandler _mediator;
+    private readonly IMediator _mediator;
     private readonly IUsuario _user;
 
-    public ClientesController(IClienteRepository clienteRepository, IMediatorHandler mediatorHandler, IUsuario user)
+    public ClientesController(IClienteRepository clienteRepository, IMediator mediator, IUsuario user)
     {
         _clienteRepository = clienteRepository;
-        _mediator = mediatorHandler;
+        _mediator = mediator;
         _user = user;
     }
 
-    [HttpGet("cliente/endereco")]
+    [HttpGet("endereco")]
     public async Task<IActionResult> ObterEndereco()
     {
         var endereco = await _clienteRepository.ObterEnderecoPorId(_user.ObterUsuarioId());
@@ -28,10 +29,10 @@ public class ClientesController : MainController
         return endereco == null ? NotFound() : ValidarResposta(endereco);
     }
 
-    [HttpPost("cliente/endereco")]
+    [HttpPost("endereco")]
     public async Task<IActionResult> AdicionarEndereco(AdicionarEnderecoCommand endereco)
     {
         endereco.ClienteId = _user.ObterUsuarioId();
-        return ValidarResposta(await _mediator.EnviarComando(endereco));
+        return ValidarResposta(await _mediator.Send(endereco));
     }
 }
