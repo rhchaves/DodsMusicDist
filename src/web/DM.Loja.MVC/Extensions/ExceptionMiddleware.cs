@@ -1,6 +1,6 @@
 ﻿using DM.Loja.MVC.Services;
 using Polly.CircuitBreaker;
-//using Refit;
+using Refit;
 using System.Net;
 
 namespace DM.Loja.MVC.Extensions;
@@ -28,34 +28,36 @@ public class ExceptionMiddleware
         {
             HandleRequestExceptionAsync(httpContext, ex.StatusCode);
         }
-        //catch (ValidationApiException ex)
-        //{
-        //    HandleRequestExceptionAsync(httpContext, ex.StatusCode);
-        //}
-        //catch (ApiException ex)
-        //{
-        //    HandleRequestExceptionAsync(httpContext, ex.StatusCode);
-        //}
+        catch (ValidationApiException ex)
+        {
+            HandleRequestExceptionAsync(httpContext, ex.StatusCode);
+        }
+        catch (ApiException ex)
+        {
+            HandleRequestExceptionAsync(httpContext, ex.StatusCode);
+        }
         catch (BrokenCircuitException)
         {
             HandleCircuitBreakerExceptionAsync(httpContext);
         }
     }
 
-    private static void HandleRequestExceptionAsync(HttpContext context, HttpStatusCode statusCode)
+    private static async Task HandleRequestExceptionAsync(HttpContext context, HttpStatusCode statusCode)
     {
         if (statusCode == HttpStatusCode.Unauthorized)
         {
             if (_autenticacaoServico.TokenExpirado())
             {
-                if (_autenticacaoServico.RefreshTokenValido().Result)
+                var tokenRefreshed = await _autenticacaoServico.RefreshTokenValido();
+                if (tokenRefreshed)
                 {
                     context.Response.Redirect(context.Request.Path);
                     return;
                 }
             }
 
-            _autenticacaoServico.Logout();
+            if(context.User.Identity!.IsAuthenticated) _autenticacaoServico.Logout();
+
             context.Response.Redirect($"/login?ReturnUrl={context.Request.Path}");
             return;
         }

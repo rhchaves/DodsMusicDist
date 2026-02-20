@@ -5,6 +5,7 @@ using DM.WebAPI.Core.Usuario;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;
+using NetDevPack.Utilities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -70,7 +71,55 @@ public class AutenticacaoServico : Servico, IAutenticacaoServico
         return await DeserializarObjetoResposta<UsuarioRespostaLogin>(resposta);
     }
 
-    public async Task<UsuarioRespostaLogin> UtilizarRefreshToken(string refreshToken)
+    public async Task RealizarLogin(UsuarioRespostaLogin resposta)
+    {
+        var token = ObterTokenFormatado(resposta.AccessToken);
+
+        var claims = new List<Claim>
+        {
+            new("JWT", resposta.AccessToken),
+            new ("RefreshToken", resposta.RefreshToken)
+        };
+        claims.AddRange(token.Claims);
+
+        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+        var authProperties = new AuthenticationProperties
+        {
+            ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8),
+            IsPersistent = true
+        };
+
+        await _httpContextAccessor.HttpContext!.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(claimsIdentity), authProperties);
+    }
+
+    public async Task Logout()
+    {
+        await _httpContextAccessor.HttpContext!.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme,null);
+    }
+
+    public bool TokenExpirado()
+    {
+        var jwt = _usuario.ObterUsuarioToken();
+        if (jwt.IsMissing()) return false;
+
+        var token = ObterTokenFormatado(jwt);
+        return token.ValidTo.ToLocalTime() < DateTime.Now;
+    }
+
+    public async Task<bool> RefreshTokenValido()
+    {
+        var resposta = await UtilizarRefreshToken(_usuario.ObterUsuarioRefreshToken());
+
+        if (resposta.AccessToken == null || resposta.ResultadoResposta != null) return false;
+
+        await RealizarLogin(resposta);
+
+        return true;
+    }
+
+    private async Task<UsuarioRespostaLogin> UtilizarRefreshToken(string refreshToken)
     {
         var refreshTokenContent = ObterConteudo(refreshToken);
 
@@ -87,56 +136,8 @@ public class AutenticacaoServico : Servico, IAutenticacaoServico
         return await DeserializarObjetoResposta<UsuarioRespostaLogin>(resposta);
     }
 
-    public async Task RealizarLogin(UsuarioRespostaLogin resposta)
-    {
-        var token = ObterTokenFormatado(resposta.AccessToken);
-
-        var claims = new List<Claim>();
-        claims.Add(new Claim("JWT", resposta.AccessToken));
-        claims.Add(new Claim("RefreshToken", resposta.RefreshToken));
-        claims.AddRange(token.Claims);
-
-        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-        var authProperties = new AuthenticationProperties
-        {
-            ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8),
-            IsPersistent = true
-        };
-
-        await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-            new ClaimsPrincipal(claimsIdentity), authProperties);
-    }
-
-    public async Task Logout()
-    {
-        await _httpContextAccessor.HttpContext!.SignOutAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme,
-            null);
-    }
-
-    public static JwtSecurityToken ObterTokenFormatado(string jwtToken)
+    private static JwtSecurityToken ObterTokenFormatado(string jwtToken)
     {
         return new JwtSecurityTokenHandler().ReadToken(jwtToken) as JwtSecurityToken;
-    }
-
-    public bool TokenExpirado()
-    {
-        var jwt = _usuario.ObterUsuarioToken();
-        if (jwt is null) return false;
-
-        var token = ObterTokenFormatado(jwt);
-        return token.ValidTo.ToLocalTime() < DateTime.Now;
-    }
-
-    public async Task<bool> RefreshTokenValido()
-    {
-        var resposta = await UtilizarRefreshToken(_usuario.ObterUsuarioRefreshToken());
-
-        if (resposta.AccessToken == null || resposta.ResultadoResposta != null) return false;
-
-            await RealizarLogin(resposta);
-
-        return true;
     }
 }

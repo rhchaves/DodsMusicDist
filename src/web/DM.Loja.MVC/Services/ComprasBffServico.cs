@@ -44,11 +44,26 @@ public class ComprasBffServico : Servico, IComprasBffServico
     }
     public async Task<int> ObterQuantidadeCarrinho()
     {
-        var resposta = await _httpClient.GetAsync("/compras/carrinho/quantidade/");
+        try
+        {
+            var resposta = await _httpClient.GetAsync("/compras/carrinho/quantidade/");
 
-        TratarErrosResposta(resposta);
+            if (!resposta.IsSuccessStatusCode)
+            {
+                var problema = resposta.RequestMessage;
+                var body = await resposta.Content.ReadAsStringAsync();
+            }
 
-        return await DeserializarObjetoResposta<int>(resposta);
+            TratarErrosResposta(resposta);
+
+            return await DeserializarObjetoResposta<int>(resposta);
+        }
+        catch (HttpRequestException ex)
+        {
+            // Aqui costuma vir: certificado inválido, connection refused, etc.
+            // Log ex.Message e ex.InnerException
+            throw;
+        }
     }
     public async Task<ResponseResult> AdicionarItemCarrinho(ItemCarrinhoViewModel carrinho)
     {

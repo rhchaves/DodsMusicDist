@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using NetDevPack.Security.JwtSigningCredentials.Interfaces;
+using NetDevPack.Security.Jwt.Core.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -20,11 +20,11 @@ public class AutenticacaoServico
     private readonly AppConfig _appSettings;
     private readonly AppTokenConfig _appTokenConfig;
     private readonly AppDbContext _context;
-    private readonly IJsonWebKeySetService _jwksService;
+    private readonly IJwtService _jwksService;
     private readonly IUsuario _usuario;
 
     public AutenticacaoServico(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, IOptions<AppConfig> appSettings,
-        IOptions<AppTokenConfig> appTokenConfig, AppDbContext context, IJsonWebKeySetService jwksService, IUsuario usuario)
+        IOptions<AppTokenConfig> appTokenConfig, AppDbContext context, IJwtService jwksService, IUsuario usuario)
     {
         SignInManager = signInManager;
         UserManager = userManager;
@@ -70,13 +70,13 @@ public class AutenticacaoServico
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var currentIssuer = $"{_usuario.ObterHttpContext().Request.Scheme}://{_usuario.ObterHttpContext().Request.Host}";
-        var key = _jwksService.GetCurrent();
+        //var key = _jwksService.GetCurrent();
         var token = tokenHandler.CreateToken(new SecurityTokenDescriptor
         {
             Issuer = currentIssuer,
             Subject = identityClaims,
             Expires = DateTime.UtcNow.AddHours(1),
-            SigningCredentials = key
+            //SigningCredentials = key
         });
 
         return tokenHandler.WriteToken(token);

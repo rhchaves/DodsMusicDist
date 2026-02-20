@@ -26,7 +26,7 @@ VALUES
 (
     'd6a7f6b5-5ab6-4a06-8f8e-85e9d8cd4122',
     'Guitarra Les Paul Black',
-    'Guitarra Les Paul Black descrição completa',
+    'Guitarra Strinberg lps-230 bks - A Guitarra LPS-230 BKS da Strinberg, é um instrumento com o corpo construído em Basswood Sólido, braço em Maple, escala em Technical Wood 24,75’’, tampo em Basswood e seu formato sendo o Les Paul, além de contar com 22 trastes. Possui o acabamento fosco de seu corpo a cor black satin realçam a beleza desse instrumento, sendo esse uma excelente escolha para quem procura um instrumento de alta qualidade, sendo projetado para oferecer um som encorpado e uma tocabilidade confortável.',
     1,
     1500.00,
     GETDATE(),

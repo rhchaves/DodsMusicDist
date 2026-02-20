@@ -1,37 +1,35 @@
-﻿using DM.Identidade.API.Services;
+﻿using DM.WebAPI.Core.Configuration;
 using DM.WebAPI.Core.Identidade;
 using DM.WebAPI.Core.Usuario;
-using NetDevPack.Security.JwtSigningCredentials.AspNetCore;
 
 namespace DM.Identidade.API.Configuration;
 
 public static class ApiConfig
 {
-    public static IServiceCollection AddApiConfig(this IServiceCollection services)
+    public static IServiceCollection AddApiConfig(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddControllers();
 
-        services.AddScoped<AutenticacaoServico>();
         services.AddScoped<IUsuario, Usuario>();
+        services.AddVerificacaoSaudeGenerica(configuration);
 
         return services;
     }
 
-    public static IApplicationBuilder UseApiConfig(this IApplicationBuilder app, IWebHostEnvironment env)
+    public static IApplicationBuilder UseApiConfig(this WebApplication app, IWebHostEnvironment env)
     {
         if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
-        app.UseHttpsRedirection();
-        
+        // Under certain scenarios, e.g. minikube / linux environment / behind load balancer
+        // https redirection could lead dev's to overcomplicated configuration for testing purposes
+        // In production is a good practice to keep it true
+        if (app.Configuration["USE_HTTPS_REDIRECTION"] == "true")
+            app.UseHttpsRedirection();
+
         app.UseRouting();
         app.UseAutenticacaoConfig();
-
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
-
         app.UseJwksDiscovery();
+        app.UseVerificacaoSaudeGenerica();
 
         return app;
     }

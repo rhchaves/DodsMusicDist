@@ -1,8 +1,9 @@
 ﻿using DM.Identidade.API.Data;
-using DM.Identidade.API.Extensions;
+using DM.WebAPI.Core.DatabaseType;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using NetDevPack.Security.JwtSigningCredentials;
+using NetDevPack.Identity.Jwt;
+using NetDevPack.Security.PasswordHasher.Core;
+using static DM.WebAPI.Core.DatabaseType.ProvedorConfig;
 
 namespace DM.Identidade.API.Configuration;
 
@@ -10,21 +11,23 @@ public static class IdentidadeConfig
 {
     public static IServiceCollection AddIdentidadeConfig(this IServiceCollection services, IConfiguration configuration)
     {
-        var appSettingsSection = configuration.GetSection("AppTokenConfig");
-        services.Configure<AppTokenConfig>(appSettingsSection);
-        
-        services.AddJwksManager(options => options.Algorithm = Algorithm.ES256)
-            .PersistKeysToDatabaseStore<AppDbContext>();
+        services.ConfigurarProvedorParaContexto<AppDbContext>(DetectarBancoDeDados(configuration));
 
-        services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection") ??
-                throw new InvalidOperationException("Connection string 'DefaultConnection' not found.")));
+        services.AddMemoryCache().AddDataProtection();
 
-        services.AddDefaultIdentity<IdentityUser>()
-            .AddRoles<IdentityRole>()
-            .AddErrorDescriber<IdentidadeMsgPtBr>()
-            .AddEntityFrameworkStores<AppDbContext>()
-            .AddDefaultTokenProviders();
+        services.AddJwtConfiguration(configuration, "AppSettings").AddNetDevPackIdentity<IdentityUser>().PersistKeysToDatabaseStore<AppDbContext>();
+
+        services.AddIdentity<IdentityUser, IdentityRole>(set =>
+        {
+            set.Password.RequireDigit = false;
+            set.Password.RequireLowercase = false;
+            set.Password.RequireNonAlphanumeric = false;
+            set.Password.RequireUppercase = false;
+            set.Password.RequiredUniqueChars = 0;
+            set.Password.RequiredLength = 8;
+        }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+
+        services.UpgradePasswordSecurity().WithStrengthen(PasswordHasherStrength.Moderate).UseArgon2<IdentityUser>();
 
         return services;
     }

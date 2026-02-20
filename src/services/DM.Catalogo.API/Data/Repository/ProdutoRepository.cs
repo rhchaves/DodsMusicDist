@@ -1,5 +1,4 @@
-﻿using Dapper;
-using DM.Catalogo.API.Models;
+﻿using DM.Catalogo.API.Models;
 using DM.Core.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,19 +17,17 @@ public class ProdutoRepository : IProdutoRepository
 
     public async Task<PagedResult<Produto>> ObterTodos(int pageSize, int pageIndex, string? query = null)
     {
-        var sql = @$"SELECT * FROM Produtos 
-                      WHERE (@Nome IS NULL OR Nome LIKE '%' + @Nome + '%') 
-                      ORDER BY [Nome] 
-                      OFFSET {pageSize * (pageIndex - 1)} ROWS 
-                      FETCH NEXT {pageSize} ROWS ONLY 
-                      SELECT COUNT(Id) FROM Produtos 
-                      WHERE (@Nome IS NULL OR Nome LIKE '%' + @Nome + '%')";
+        var produtosQuery = _context.Produtos.AsQueryable();
 
-        var multi = await _context.Database.GetDbConnection()
-            .QueryMultipleAsync(sql, new { Nome = query });
+        var produtos = await produtosQuery.AsNoTrackingWithIdentityResolution()
+            .Where(x => EF.Functions.Like(x.Nome, $"%{query}%"))
+            .OrderBy(x => x.Nome)
+            .Skip(pageSize * (pageIndex - 1))
+            .Take(pageSize).ToListAsync();
 
-        var produtos = multi.Read<Produto>();
-        var total = multi.Read<int>().FirstOrDefault();
+        var total = await produtosQuery.AsNoTrackingWithIdentityResolution()
+            .Where(x => EF.Functions.Like(x.Nome, $"%{query}%"))
+            .CountAsync();
 
         return new PagedResult<Produto>()
         {
@@ -49,15 +46,13 @@ public class ProdutoRepository : IProdutoRepository
 
     public async Task<List<Produto>> ObterProdutosPorId(string ids)
     {
-        var idsGuid = ids.Split(',')
-            .Select(id => (Ok: Guid.TryParse(id, out var x), Value: x));
+        var idsGuid = ids.Split(',').Select(id => (Ok: Guid.TryParse(id, out var x), Value: x));
 
         if (!idsGuid.All(nid => nid.Ok)) return new List<Produto>();
 
         var idsValue = idsGuid.Select(id => id.Value);
 
-        return await _context.Produtos.AsNoTracking()
-            .Where(p => idsValue.Contains(p.Id) && p.Ativo).ToListAsync();
+        return await _context.Produtos.AsNoTracking().Where(p => idsValue.Contains(p.Id) && p.Ativo).ToListAsync();
     }
 
     public void Adicionar(Produto produto)

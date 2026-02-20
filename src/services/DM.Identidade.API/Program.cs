@@ -3,7 +3,7 @@ using DM.Identidade.API.Configuration;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddIdentidadeConfig(builder.Configuration);
-builder.Services.AddApiConfig();
+builder.Services.AddApiConfig(builder.Configuration);
 builder.Services.AddSwaggerConfig();
 builder.Services.AddMessageBusConfig(builder.Configuration);
 

@@ -1,5 +1,6 @@
 ﻿using DM.Core.Communication;
 using DM.Loja.MVC.Extensions;
+using Org.BouncyCastle.Ocsp;
 using System.Text;
 using System.Text.Json;
 
@@ -19,21 +20,25 @@ public abstract class Servico
         return JsonSerializer.Deserialize<T>(await responseMessage.Content.ReadAsStringAsync(), options);
     }
 
-    protected bool TratarErrosResposta(HttpResponseMessage response)
+    protected bool TratarErrosResposta(HttpResponseMessage resposta)
     {
-        switch ((int)response.StatusCode)
+        switch ((int)resposta.StatusCode)
         {
             case 401:
             case 403:
             case 404:
             case 500:
-                throw new CustomHttpRequestException(response.StatusCode);
+
+                var teste = resposta;
+                var problema = resposta.RequestMessage;
+
+                throw new CustomHttpRequestException(resposta.StatusCode);
 
             case 400:
                 return false;
         }
 
-        response.EnsureSuccessStatusCode();
+        resposta.EnsureSuccessStatusCode();
         return true;
     }
 
