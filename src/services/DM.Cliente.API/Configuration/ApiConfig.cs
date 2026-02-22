@@ -1,6 +1,5 @@
 ﻿using DM.Clientes.API.Data;
 using DM.WebAPI.Core.Configuration;
-using Microsoft.EntityFrameworkCore;
 
 namespace DM.Clientes.API.Configuration;
 

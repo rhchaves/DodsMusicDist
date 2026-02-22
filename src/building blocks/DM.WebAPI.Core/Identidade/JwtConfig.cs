@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using DM.WebAPI.Core.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Logging;
 using NetDevPack.Security.JwtExtensions;
+using System.Diagnostics;
 
 namespace DM.WebAPI.Core.Identidade;
 
@@ -13,19 +16,20 @@ public static class JwtConfig
         var appConfigSection = configuration.GetSection("AppSettings");
         services.Configure<AppConfig>(appConfigSection);
 
-        var appConfig = appConfigSection.Get<AppConfig>();
+        var jwkOptions = appConfigSection.Get<JwkOptions>();
+        jwkOptions.KeepFor = TimeSpan.FromMinutes(15);
+        if (Debugger.IsAttached)
+            IdentityModelEventSource.ShowPII = true;
 
-        services.AddAuthentication(x =>
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
         {
-            x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(x =>
-        {
-            x.RequireHttpsMetadata = false;
-            x.BackchannelHttpHandler = new HttpClientHandler { ServerCertificateCustomValidationCallback = delegate { return true; } };
-            x.SaveToken = true;
-            x.SetJwksOptions(new JwkOptions(appConfig.AutenticacaoJwksUrl));
+            options.RequireHttpsMetadata = false;
+            options.BackchannelHttpHandler = HttpExtensions.ConfigureClientHandler();
+            options.SaveToken = true;
+            options.SetJwksOptions(jwkOptions);
         });
+
+        services.AddAuthorization();
     }
 
     public static void UseAutenticacaoConfig(this IApplicationBuilder app)

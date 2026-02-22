@@ -1,6 +1,5 @@
 ﻿using DM.Pedidos.Infra.Data;
 using DM.WebAPI.Core.Configuration;
-using Microsoft.EntityFrameworkCore;
 
 namespace DM.Pedidos.API.Configuration;
 

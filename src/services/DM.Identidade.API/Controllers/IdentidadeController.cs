@@ -1,6 +1,5 @@
 ﻿using DM.Core.Messages.Integration;
 using DM.Identidade.API.Models;
-using DM.Identidade.API.Services;
 using DM.WebAPI.Core.Controllers;
 using MassTransit;
 using Microsoft.AspNetCore.Identity;
@@ -8,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using NetDevPack.Identity.Interfaces;
-using NetDevPack.Identity.User;
 using NetDevPack.Security.Jwt.Core.Interfaces;
 
 namespace DM.Identidade.API.Controllers;
@@ -16,22 +14,17 @@ namespace DM.Identidade.API.Controllers;
 [Route("api/identidade")]
 public class IdentidadeController : MainController
 {
-    //AutenticacaoServico _autenticacaoServico;
     private readonly IBus _bus;
     private readonly IJwtBuilder _jwtBuilder;
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
-    private readonly IAspNetUser _aspNetUser;
 
-    public IdentidadeController(IBus bus, IJwtBuilder jwtBuilder, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, 
-        IAspNetUser aspNetUser)
+    public IdentidadeController(IBus bus, IJwtBuilder jwtBuilder, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
     {
-        //_autenticacaoServico = autenticacaoServico;
         _bus = bus;
         _jwtBuilder = jwtBuilder;
         _signInManager = signInManager;
         _userManager = userManager;
-        _aspNetUser = aspNetUser;
     }
 
     [HttpPost("nova-conta")]
@@ -132,20 +125,22 @@ public class IdentidadeController : MainController
         return ValidarResposta(jwt);
     }
 
-    #if DEBUG
+#if DEBUG
     [HttpPost("validar-jwt")]
     public async Task<ActionResult> ValidarJwt([FromServices] IJwtService jwtService, [FromForm] string jwt)
     {
         var handler = new JsonWebTokenHandler();
 
+        var teste = await jwtService.GetCurrentSecurityKey();
+
         var result = await handler.ValidateTokenAsync(jwt, new TokenValidationParameters
         {
-            ValidIssuer = $"{_aspNetUser.ObterHttpContext().Request.Scheme}://{_aspNetUser.ObterHttpContext().Request.Host}",
+            ValidIssuer = "https://localhost:5101",
             ValidAudience = "DodsMusic",
             ValidateAudience = true,
             ValidateIssuer = true,
             RequireSignedTokens = false,
-            IssuerSigningKey = await jwtService.GetCurrentSecurityKey()
+            IssuerSigningKey = teste
         });
 
         if (!result.IsValid)
@@ -154,7 +149,7 @@ public class IdentidadeController : MainController
         return Ok(result.Claims.Select(s => new { s.Key, s.Value }));
     }
 
-    #endif
+#endif
 
     #region Métodos Privados
     private async Task<ResponseMessage> RegistrarCliente(UsuarioRegistro usuarioRegistro)
